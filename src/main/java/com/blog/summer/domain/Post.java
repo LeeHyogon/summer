@@ -1,6 +1,7 @@
 package com.blog.summer.domain;
 
 
+import lombok.Builder;
 import lombok.Getter;
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Builder
 public class Post extends BaseTimeEntity {
 
     @Id
@@ -29,4 +31,12 @@ public class Post extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @Builder
+    public Post(String title, String content, Member member) {
+        this.title = title;
+        this.content = content;
+        this.member = member;
+    }
 }
+

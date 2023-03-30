@@ -15,7 +15,7 @@ public class Category {
     @Column(name = "category_id")
     private Long id;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Post> posts = new ArrayList<>();
 
 }

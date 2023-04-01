@@ -20,10 +20,6 @@ public class PostService {
         String username = postDto.getAuthor();
         Member member = memberRepository.findByUsername(username);
 
-        Post.builder().title(postDto.getTitle())
-                .content(postDto.getContent())
-                .member(member);
-
         return null;
     }
 }

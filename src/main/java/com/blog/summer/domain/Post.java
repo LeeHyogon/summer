@@ -9,7 +9,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Builder
 public class Post extends BaseTimeEntity {
 
     @Id
@@ -32,11 +31,6 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @Builder
-    public Post(String title, String content, Member member) {
-        this.title = title;
-        this.content = content;
-        this.member = member;
-    }
+
 }
 

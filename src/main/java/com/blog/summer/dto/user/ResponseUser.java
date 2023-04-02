@@ -1,4 +1,4 @@
-package com.blog.summer.dto;
+package com.blog.summer.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;

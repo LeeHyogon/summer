@@ -1,25 +1,41 @@
 package com.blog.summer.service;
 
 
-import com.blog.summer.domain.Member;
 import com.blog.summer.domain.Post;
-import com.blog.summer.dto.PostDto;
-import com.blog.summer.dto.ResponsePostRegister;
-import com.blog.summer.repository.MemberRepository;
+import com.blog.summer.domain.UserEntity;
+import com.blog.summer.dto.post.PostDto;
+import com.blog.summer.dto.post.ResponsePostRegister;
 import com.blog.summer.repository.PostRepository;
+import com.blog.summer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.mapper.Mapper;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
-    private final MemberRepository memberRepository;
+    private final UserRepository userRepository;
+
 
     public ResponsePostRegister createPost(PostDto postDto) {
-        String username = postDto.getAuthor();
-        Member member = memberRepository.findByUsername(username);
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        Post post = mapper.map(postDto, Post.class);
+        UserEntity user = userRepository.findByUserId(postDto.getUserId());
+        post.setUser(user);
+        Long postId=post.getId();
+        String name=user.getName();
 
-        return null;
+        ResponsePostRegister responsePostRegister= ResponsePostRegister.builder()
+                .postId(postId)
+                .name(name)
+                .title(postDto.getTitle())
+                .content(postDto.getContent())
+                .categoryName(postDto.getCategoryName())
+                .build();
+        return responsePostRegister;
     }
 }

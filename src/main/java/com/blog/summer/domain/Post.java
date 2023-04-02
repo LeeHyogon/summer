@@ -2,13 +2,14 @@ package com.blog.summer.domain;
 
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter
+@Data
 public class Post extends BaseTimeEntity {
 
     @Id
@@ -20,16 +21,16 @@ public class Post extends BaseTimeEntity {
 
     private String content;
 
+    private String categoryName;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "users_id")
+    private UserEntity user;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
+
 
 
 }

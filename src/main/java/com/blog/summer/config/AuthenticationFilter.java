@@ -1,7 +1,7 @@
 package com.blog.summer.config;
 
-import com.blog.summer.dto.RequestLogin;
-import com.blog.summer.dto.UserDto;
+import com.blog.summer.dto.user.RequestLogin;
+import com.blog.summer.dto.user.UserDto;
 import com.blog.summer.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;

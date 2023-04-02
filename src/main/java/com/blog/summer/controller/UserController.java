@@ -2,16 +2,14 @@ package com.blog.summer.controller;
 
 
 import com.blog.summer.domain.UserEntity;
-import com.blog.summer.dto.RequestUser;
-import com.blog.summer.dto.ResponseUser;
-import com.blog.summer.dto.UserDto;
-import com.blog.summer.dto.UserLoginDto;
+import com.blog.summer.dto.user.RequestUser;
+import com.blog.summer.dto.user.ResponseUser;
+import com.blog.summer.dto.user.UserDto;
 import com.blog.summer.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;

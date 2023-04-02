@@ -1,4 +1,4 @@
-package com.blog.summer.dto;
+package com.blog.summer.dto.user;
 
 
 import com.blog.summer.domain.BaseTimeEntity;

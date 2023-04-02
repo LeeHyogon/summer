@@ -1,7 +1,7 @@
 package com.blog.summer.service;
 
 import com.blog.summer.domain.UserEntity;
-import com.blog.summer.dto.UserDto;
+import com.blog.summer.dto.user.UserDto;
 import com.blog.summer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -13,7 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service

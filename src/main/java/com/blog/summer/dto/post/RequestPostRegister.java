@@ -1,4 +1,4 @@
-package com.blog.summer.dto;
+package com.blog.summer.dto.post;
 
 
 import lombok.Data;
@@ -17,5 +17,7 @@ public class RequestPostRegister {
     @Size(min=2, message = "content not be less than 2 characters")
     private String content;
 
-    private String author;
+    private String userId;
+
+    private String categoryName;
 }

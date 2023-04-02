@@ -1,10 +1,9 @@
 package com.blog.summer.controller;
 
 
-import com.blog.summer.domain.Post;
-import com.blog.summer.dto.PostDto;
-import com.blog.summer.dto.RequestPostRegister;
-import com.blog.summer.dto.ResponsePostRegister;
+import com.blog.summer.dto.post.PostDto;
+import com.blog.summer.dto.post.RequestPostRegister;
+import com.blog.summer.dto.post.ResponsePostRegister;
 import com.blog.summer.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -25,9 +24,8 @@ public class PostController {
         ModelMapper mapper=new ModelMapper();
 
         PostDto postDto = mapper.map(requestPostRegister, PostDto.class);
-        postService.createPost(postDto);
+        ResponsePostRegister responsePostRegister = postService.createPost(postDto);
 
-        ResponsePostRegister responsePostRegister=new ResponsePostRegister();
         return ResponseEntity.status(HttpStatus.CREATED).body(responsePostRegister);
     }
 }

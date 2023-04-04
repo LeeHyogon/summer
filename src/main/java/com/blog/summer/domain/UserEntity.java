@@ -34,4 +34,11 @@ public class UserEntity extends BaseTimeEntity{
     private List<Comment> comments=new ArrayList<>();
 
 
+    public void addPost(Post post) {
+        this.posts.add(post);
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+    }
 }

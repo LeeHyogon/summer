@@ -8,9 +8,6 @@ import com.blog.summer.dto.post.ResponsePostRegister;
 import com.blog.summer.repository.PostRepository;
 import com.blog.summer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.mapper.Mapper;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,9 +18,12 @@ public class PostService {
 
 
     public ResponsePostRegister createPost(PostDto postDto) {
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        Post post = mapper.map(postDto, Post.class);
+        Post post = Post.builder()
+                .title(postDto.getTitle())
+                .content(postDto.getContent())
+                .categoryName(postDto.getCategoryName())
+                .build();
+
         UserEntity user = userRepository.findByUserId(postDto.getUserId());
         post.setUser(user);
         postRepository.save(post);

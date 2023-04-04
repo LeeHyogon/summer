@@ -2,14 +2,14 @@ package com.blog.summer.domain;
 
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Builder
 public class Post extends BaseTimeEntity {
 
     @Id
@@ -31,7 +31,13 @@ public class Post extends BaseTimeEntity {
     private List<Comment> comments = new ArrayList<>();
 
 
+    public void setUser(UserEntity user) {
+        this.user=user;
+        user.addPost(this);
+    }
 
-
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+    }
 }
 

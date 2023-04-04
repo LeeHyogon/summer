@@ -28,7 +28,10 @@ public class Comment {
 
     public void setRegisterComment(Post post, UserEntity user, String body) {
         this.post=post;
+        this.post.addComment(this);
+
         this.user=user;
+        this.user.addComment(this);
         this.body=body;
     }
 }

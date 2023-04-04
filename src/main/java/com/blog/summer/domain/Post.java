@@ -12,9 +12,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class Post extends BaseTimeEntity {
 
     @Id
@@ -43,6 +40,12 @@ public class Post extends BaseTimeEntity {
 
     public void addComment(Comment comment) {
         this.comments.add(comment);
+    }
+    @Builder
+    public Post(String title, String content, String categoryName) {
+        this.title = title;
+        this.content = content;
+        this.categoryName = categoryName;
     }
 }
 

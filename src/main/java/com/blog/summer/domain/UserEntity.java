@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
 @Table(name = "users")
 public class UserEntity extends BaseTimeEntity{
     @Id
@@ -40,5 +40,9 @@ public class UserEntity extends BaseTimeEntity{
 
     public void addComment(Comment comment) {
         this.comments.add(comment);
+    }
+
+    public void setEncryptedPwd(String encode) {
+        this.encryptedPwd=encode;
     }
 }

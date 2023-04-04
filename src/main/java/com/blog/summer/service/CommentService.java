@@ -18,7 +18,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
     private final PostRepository postRepository;
 
     public ResponseCommentRegister createComment(CommentDto commentDto) {
@@ -29,6 +28,7 @@ public class CommentService {
         if(post != null) {
             comment.setRegisterComment(post.get(), post.get().getUser(), body);
         }
+        commentRepository.save(comment);
         return ResponseCommentRegister.builder()
                 .title(post.get().getTitle())
                 .name(post.get().getUser().getName())

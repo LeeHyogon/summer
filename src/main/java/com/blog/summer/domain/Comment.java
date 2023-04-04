@@ -4,6 +4,8 @@ package com.blog.summer.domain;
 import lombok.Getter;
 
 import javax.persistence.*;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 @Entity
 @Getter
@@ -22,4 +24,11 @@ public class Comment {
     @JoinColumn(name = "users_id")
     private UserEntity user;
 
+    private String body;
+
+    public void setRegisterComment(Post post, UserEntity user, String body) {
+        this.post=post;
+        this.user=user;
+        this.body=body;
+    }
 }

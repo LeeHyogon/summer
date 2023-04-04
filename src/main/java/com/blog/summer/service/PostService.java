@@ -26,9 +26,15 @@ public class PostService {
         Post post = mapper.map(postDto, Post.class);
         UserEntity user = userRepository.findByUserId(postDto.getUserId());
         post.setUser(user);
+        postRepository.save(post);
         Long postId=post.getId();
         String name=user.getName();
 
+        return getResponsePostRegister(postDto, postId, name);
+    }
+
+
+    private static ResponsePostRegister getResponsePostRegister(PostDto postDto, Long postId, String name) {
         ResponsePostRegister responsePostRegister= ResponsePostRegister.builder()
                 .postId(postId)
                 .name(name)

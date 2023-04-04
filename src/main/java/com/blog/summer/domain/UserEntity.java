@@ -1,10 +1,7 @@
 package com.blog.summer.domain;
 
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -33,6 +30,15 @@ public class UserEntity extends BaseTimeEntity{
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Comment> comments=new ArrayList<>();
 
+    public UserEntity() {
+    }
+
+    @Builder
+    public UserEntity(String email, String name, String userId) {
+        this.email = email;
+        this.name = name;
+        this.userId = userId;
+    }
 
     public void addPost(Post post) {
         this.posts.add(post);

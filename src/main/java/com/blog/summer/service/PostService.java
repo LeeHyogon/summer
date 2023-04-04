@@ -24,7 +24,9 @@ public class PostService {
                 .categoryName(postDto.getCategoryName())
                 .build();
 
+        //null 처리 예정
         UserEntity user = userRepository.findByUserId(postDto.getUserId());
+
         post.setUser(user);
         postRepository.save(post);
         Long postId=post.getId();

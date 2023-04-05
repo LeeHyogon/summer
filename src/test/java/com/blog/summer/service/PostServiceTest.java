@@ -50,7 +50,6 @@ class PostServiceTest {
         ResponsePostRegister responsePost = postService.createPost(postDto);
         return responsePost;
     }
-
     @Test
     @Transactional
     void deletePost() {
@@ -62,6 +61,5 @@ class PostServiceTest {
         postRepository.delete(post);
         assertEquals(Optional.empty(),postRepository.findById(id));
         assertEquals(user,userRepository.findByUserId(user.getUserId()));
-
     }
 }

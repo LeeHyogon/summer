@@ -1,6 +1,7 @@
 package com.blog.summer.domain;
 
 
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -33,5 +34,11 @@ public class Comment {
         this.user=user;
         this.user.addComment(this);
         this.body=body;
+    }
+    @Builder
+    public Comment(Post post, UserEntity user, String body) {
+        this.post = post;
+        this.user = user;
+        this.body = body;
     }
 }

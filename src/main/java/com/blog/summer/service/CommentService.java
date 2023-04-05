@@ -19,7 +19,6 @@ import java.util.Optional;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
-
     public ResponseCommentRegister createComment(CommentDto commentDto) {
         Long postId = commentDto.getPostId();
         String body = commentDto.getBody();

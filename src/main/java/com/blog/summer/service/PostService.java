@@ -1,16 +1,19 @@
 package com.blog.summer.service;
 
 
+import com.blog.summer.domain.Comment;
 import com.blog.summer.domain.Post;
 import com.blog.summer.domain.UserEntity;
 import com.blog.summer.dto.post.PostDto;
 import com.blog.summer.dto.post.ResponsePostRegister;
 import com.blog.summer.exception.NotFoundException;
+import com.blog.summer.repository.CommentRepository;
 import com.blog.summer.repository.PostRepository;
 import com.blog.summer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,6 +21,7 @@ import java.util.Optional;
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
 
     public ResponsePostRegister createPost(PostDto postDto) {
@@ -38,9 +42,13 @@ public class PostService {
         return getResponsePostRegister(postDto, postId, name);
     }
 
-    public void deletePost(Long postId){
-        Optional<Post> postOptional = postRepository.findById(postId);
-        Post post = postOptional.orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
+    public void deletePostandComment(Long postId){
+
+        Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
+        List<Comment> comments = post.getComments();
+        for (Comment comment : comments) {
+            commentRepository.delete(comment);
+        }
         postRepository.delete(post);
     }
 

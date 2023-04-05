@@ -26,8 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class PostServiceTest {
-    @Autowired
-    EntityManager em;
+
     @Autowired
     PostService postService;
     @Autowired
@@ -47,12 +46,11 @@ class PostServiceTest {
         Long postId = post.getId();
         ResponseCommentRegister registerComment1 = leaveComment(postId, "댓글1");
         ResponseCommentRegister registerComment2 = leaveComment(postId, "댓글2");
-        //em.flush();
+
         assertEquals(responsePost.getPostId(), postId);
         assertEquals(responsePost.getTitle(), post.getTitle());
         assertEquals(responsePost.getContent(), post.getContent());
         assertEquals(responsePost.getCategoryName(),post.getCategoryName());
-        List<Comment> comments = post.getComments();
         assertEquals(2,post.getComments().size());
     }
 
@@ -75,11 +73,15 @@ class PostServiceTest {
         Long postId = post.getId();
         ResponseCommentRegister responseComment1 = leaveComment(postId, "댓글1");
         ResponseCommentRegister responseComment2 = leaveComment(postId, "댓글2");
+        Long commentId1 = responseComment1.getCommentId();
+        Long commentId2 = responseComment2.getCommentId();
 
         UserEntity user = post.getUser();
-        postRepository.delete(post);
+        postService.deletePostandComment(postId);
         assertEquals(Optional.empty(),postRepository.findById(postId));
         assertEquals(user,userRepository.findByUserId(user.getUserId()));
+        assertEquals(Optional.empty(),commentRepository.findById(commentId1));
+        assertEquals(Optional.empty(),commentRepository.findById(commentId2));
     }
 
     private ResponseCommentRegister leaveComment(Long postId,String body) {

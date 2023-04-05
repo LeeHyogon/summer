@@ -25,12 +25,8 @@ public class CommentService {
         String body = commentDto.getBody();
         Optional<Post> postOptional = postRepository.findByIdWithUser(postId);
         Post post = postOptional.orElseThrow(() -> new NotFoundException("게시글이 존재하지 않습니다."));
-        Comment comment = Comment.builder()
-                .post(post)
-                .user(post.getUser())
-                .body(body)
-                .build();
-
+        Comment comment = new Comment();
+        comment.setRegisterComment(post,post.getUser(),body);
         commentRepository.save(comment);
         return ResponseCommentRegister.builder()
                 .commentId(comment.getId())

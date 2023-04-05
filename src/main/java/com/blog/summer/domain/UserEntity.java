@@ -30,8 +30,7 @@ public class UserEntity extends BaseTimeEntity{
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Comment> comments=new ArrayList<>();
 
-    public UserEntity() {
-    }
+    public UserEntity() {}
 
     @Builder
     public UserEntity(String email, String name, String userId) {

@@ -32,6 +32,7 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
+    public Post() {}
 
     public void setUser(UserEntity user) {
         this.user=user;

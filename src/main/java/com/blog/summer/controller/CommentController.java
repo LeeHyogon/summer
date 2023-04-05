@@ -24,8 +24,11 @@ public class CommentController {
 
     @PostMapping("/comment")
     public ResponseEntity<ResponseCommentRegister> commentRegister(@RequestBody RequestCommentRegister commentRegister){
-        ModelMapper mapper = new ModelMapper();
-        CommentDto commentDto = mapper.map(commentRegister, CommentDto.class);
+
+        CommentDto commentDto= CommentDto.builder()
+                .postId(commentRegister.getPostId())
+                .body(commentRegister.getBody())
+                .build();
         ResponseCommentRegister responseComment = commentService.createComment(commentDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseComment);

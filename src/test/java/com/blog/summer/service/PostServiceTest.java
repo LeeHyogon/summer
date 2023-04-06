@@ -44,8 +44,8 @@ class PostServiceTest {
         Optional<Post> postOpt = postRepository.findById(responsePost.getPostId());
         Post post = postOpt.orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
         Long postId = post.getId();
-        ResponseCommentRegister registerComment1 = leaveComment(postId, "댓글1");
-        ResponseCommentRegister registerComment2 = leaveComment(postId, "댓글2");
+        leaveComment(postId, "댓글1");
+        leaveComment(postId, "댓글2");
 
         assertEquals(responsePost.getPostId(), postId);
         assertEquals(responsePost.getTitle(), post.getTitle());
@@ -71,12 +71,11 @@ class PostServiceTest {
         Optional<Post> postOpt = postRepository.findById(responsePost.getPostId());
         Post post = postOpt.orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
         Long postId = post.getId();
-        ResponseCommentRegister responseComment1 = leaveComment(postId, "댓글1");
-        ResponseCommentRegister responseComment2 = leaveComment(postId, "댓글2");
-        Long commentId1 = responseComment1.getCommentId();
-        Long commentId2 = responseComment2.getCommentId();
+        Long commentId1= leaveComment(postId, "댓글1").getCommentId();
+        Long commentId2  = leaveComment(postId, "댓글2").getCommentId();
 
         UserEntity user = post.getUser();
+
         postService.deletePostandComment(postId);
         assertEquals(Optional.empty(),postRepository.findById(postId));
         assertEquals(user,userRepository.findByUserId(user.getUserId()));

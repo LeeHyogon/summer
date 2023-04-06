@@ -11,8 +11,11 @@ import com.blog.summer.repository.CommentRepository;
 import com.blog.summer.repository.PostRepository;
 import com.blog.summer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,10 +48,17 @@ public class PostService {
     public void deletePostandComment(Long postId){
 
         Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
-        List<Comment> comments = post.getComments();
-        for (Comment comment : comments) {
+//        post.getComments().forEach(comment -> {
+//            post.getComments().remove(comment);
+//            commentRepository.delete(comment);
+//        });
+        Iterator<Comment> iterator = post.getComments().iterator();
+        while (iterator.hasNext()) {
+            Comment comment = iterator.next();
             commentRepository.delete(comment);
+            iterator.remove();
         }
+
         postRepository.delete(post);
     }
 

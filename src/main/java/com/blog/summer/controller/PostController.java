@@ -9,9 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,11 +19,21 @@ public class PostController {
 
     @PostMapping("/posts")
     public ResponseEntity<ResponsePostRegister> postRegister(@RequestBody RequestPostRegister requestPostRegister) {
-        ModelMapper mapper=new ModelMapper();
 
-        PostDto postDto = mapper.map(requestPostRegister, PostDto.class);
+        PostDto postDto= PostDto.builder()
+                .title(requestPostRegister.getTitle())
+                .content(requestPostRegister.getContent())
+                .userId(requestPostRegister.getUserId())
+                .categoryName(requestPostRegister.getCategoryName())
+                .build();
         ResponsePostRegister responsePostRegister = postService.createPost(postDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responsePostRegister);
     }
+    @DeleteMapping("/posts/{postId}")
+    public ResponseEntity<?> deletePost(@PathVariable Long postId){
+        postService.deletePostandComment(postId);
+        return ResponseEntity.ok().build();
+    }
+
 }

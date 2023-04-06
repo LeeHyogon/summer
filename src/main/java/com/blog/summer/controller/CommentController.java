@@ -11,9 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,5 +30,10 @@ public class CommentController {
         ResponseCommentRegister responseComment = commentService.createComment(commentDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseComment);
+    }
+    @DeleteMapping("/comment/{commentId}")
+    public ResponseEntity<?> deletePost(@PathVariable Long commentId){
+        commentService.deleteComment(commentId);
+        return ResponseEntity.ok().build();
     }
 }

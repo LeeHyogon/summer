@@ -11,13 +11,9 @@ import com.blog.summer.repository.CommentRepository;
 import com.blog.summer.repository.PostRepository;
 import com.blog.summer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,13 +41,10 @@ public class PostService {
         return getResponsePostRegister(postDto, postId, name);
     }
 
-    public void deletePostandComment(Long postId){
+    public void deletePostAndComment(Long postId){
 
         Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
-//        post.getComments().forEach(comment -> {
-//            post.getComments().remove(comment);
-//            commentRepository.delete(comment);
-//        });
+
         Iterator<Comment> iterator = post.getComments().iterator();
         while (iterator.hasNext()) {
             Comment comment = iterator.next();

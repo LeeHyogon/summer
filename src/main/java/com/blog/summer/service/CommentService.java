@@ -39,6 +39,7 @@ public class CommentService {
     public void deleteComment(Long commentId){
         Optional<Comment> commentOptional = commentRepository.findById(commentId);
         Comment comment = commentOptional.orElseThrow(() -> new NotFoundException("댓글을 찾을 수 없습니다."));
+        comment.getPost().getComments().remove(comment);
         commentRepository.delete(comment);
     }
 }

@@ -1,7 +1,6 @@
 package com.blog.summer.service;
 
 import com.blog.summer.domain.Post;
-import com.blog.summer.domain.UserEntity;
 import com.blog.summer.dto.comment.CommentDto;
 import com.blog.summer.dto.comment.ResponseCommentRegister;
 import com.blog.summer.dto.post.PostDto;
@@ -9,8 +8,8 @@ import com.blog.summer.dto.post.ResponsePostRegister;
 import com.blog.summer.exception.NotFoundException;
 import com.blog.summer.repository.CommentRepository;
 import com.blog.summer.repository.PostRepository;
-import com.blog.summer.repository.UserRepository;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -21,31 +20,33 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class PostServiceTest {
+class CommentServiceTest {
 
     @Autowired
     PostService postService;
     @Autowired
-    CommentService commentService;
-    @Autowired
     PostRepository postRepository;
     @Autowired
+    CommentService commentService;
+
+    @Autowired
     CommentRepository commentRepository;
+
     @Test
     @Transactional
-    void createPostandComment() {
+    void deleteComment() {
         ResponsePostRegister responsePost = createAndGetResponsePostRegister();
         Optional<Post> postOpt = postRepository.findById(responsePost.getPostId());
         Post post = postOpt.orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
         Long postId = post.getId();
-        leaveComment(postId, "댓글1");
-        leaveComment(postId, "댓글2");
+        Long commentId1= leaveComment(postId, "댓글1").getCommentId();
+        Long commentId2  = leaveComment(postId, "댓글2").getCommentId();
 
-        assertEquals(responsePost.getPostId(), postId);
-        assertEquals(responsePost.getTitle(), post.getTitle());
-        assertEquals(responsePost.getContent(), post.getContent());
-        assertEquals(responsePost.getCategoryName(),post.getCategoryName());
-        assertEquals(2,post.getComments().size());
+        commentService.deleteComment(commentId1);
+
+        assertEquals(post.getComments().size(),1);
+        assertEquals(Optional.empty(),commentRepository.findById(commentId1));
+
     }
 
     private ResponsePostRegister createAndGetResponsePostRegister() {
@@ -58,23 +59,8 @@ class PostServiceTest {
         ResponsePostRegister responsePost = postService.createPost(postDto);
         return responsePost;
     }
-    @Test
-    @Transactional
-    void deletePost() {
-        ResponsePostRegister responsePost = createAndGetResponsePostRegister();
-        Optional<Post> postOpt = postRepository.findById(responsePost.getPostId());
-        Post post = postOpt.orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
-        Long postId = post.getId();
-        Long commentId1= leaveComment(postId, "댓글1").getCommentId();
-        Long commentId2  = leaveComment(postId, "댓글2").getCommentId();
-
-        postService.deletePostAndComment(postId);
-        assertEquals(Optional.empty(),postRepository.findById(postId));
-        assertEquals(Optional.empty(),commentRepository.findById(commentId1));
-        assertEquals(Optional.empty(),commentRepository.findById(commentId2));
-    }
-    private ResponseCommentRegister leaveComment(Long postId,String body) {
-         return commentService.createComment(CommentDto.builder()
+    private ResponseCommentRegister leaveComment(Long postId, String body) {
+        return commentService.createComment(CommentDto.builder()
                 .postId(postId)
                 .body(body)
                 .build());

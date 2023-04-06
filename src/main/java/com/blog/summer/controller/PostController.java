@@ -6,7 +6,6 @@ import com.blog.summer.dto.post.RequestPostRegister;
 import com.blog.summer.dto.post.ResponsePostRegister;
 import com.blog.summer.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +31,7 @@ public class PostController {
     }
     @DeleteMapping("/posts/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable Long postId){
-        postService.deletePostandComment(postId);
+        postService.deletePostAndComment(postId);
         return ResponseEntity.ok().build();
     }
 

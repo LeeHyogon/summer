@@ -41,9 +41,11 @@ public class PostService {
         return getResponsePostRegister(postDto, postId, name);
     }
 
-    public void deletePostAndComment(Long postId){
+    public void deletePost(Long postId){
 
         Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
+        /*
+        comment삭제 시 user의 리스트에서 comment 연관관계를 삭제하기 어려움.
 
         Iterator<Comment> iterator = post.getComments().iterator();
         while (iterator.hasNext()) {
@@ -51,7 +53,7 @@ public class PostService {
             commentRepository.delete(comment);
             iterator.remove();
         }
-
+         */
         postRepository.delete(post);
     }
 

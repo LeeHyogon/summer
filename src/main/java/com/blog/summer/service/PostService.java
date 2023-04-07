@@ -4,6 +4,7 @@ package com.blog.summer.service;
 import com.blog.summer.domain.Comment;
 import com.blog.summer.domain.Post;
 import com.blog.summer.domain.UserEntity;
+import com.blog.summer.dto.comment.ResponseComment;
 import com.blog.summer.dto.post.PostDto;
 import com.blog.summer.dto.post.ResponsePostRegister;
 import com.blog.summer.exception.NotFoundException;
@@ -13,7 +14,9 @@ import com.blog.summer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -44,17 +47,23 @@ public class PostService {
     public void deletePost(Long postId){
 
         Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
-        /*
-        comment삭제 시 user의 리스트에서 comment 연관관계를 삭제하기 어려움.
 
-        Iterator<Comment> iterator = post.getComments().iterator();
-        while (iterator.hasNext()) {
-            Comment comment = iterator.next();
-            commentRepository.delete(comment);
-            iterator.remove();
-        }
-         */
         postRepository.delete(post);
+    }
+    public List<ResponseComment> getCommentList(Long postId){
+        Optional<Post> postOpt = postRepository.findById(postId);
+        Post post = postOpt.orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
+        List<Comment> comments = commentRepository.findByPost(post);
+        List<ResponseComment> responseComments = new ArrayList<>();
+        comments.forEach(comment -> {
+            responseComments.add(
+                    ResponseComment.builder()
+                            .body(comment.getBody())
+                            .name(comment.getUsername())
+                            .build()
+            );
+        });
+        return responseComments;
     }
 
 
@@ -68,4 +77,6 @@ public class PostService {
                 .build();
         return responsePostRegister;
     }
+
+
 }

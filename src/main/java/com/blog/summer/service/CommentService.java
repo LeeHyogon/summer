@@ -26,12 +26,13 @@ public class CommentService {
         Optional<Post> postOptional = postRepository.findByIdWithUser(postId);
         Post post = postOptional.orElseThrow(() -> new NotFoundException("게시글이 존재하지 않습니다."));
         Comment comment = new Comment();
-        comment.setRegisterComment(post,post.getUser(),body);
+        UserEntity user = post.getUser();
+        comment.setRegisterComment(post,user,body,user.getName());
         commentRepository.save(comment);
         return ResponseCommentRegister.builder()
                 .commentId(comment.getId())
                 .title(post.getTitle())
-                .name(post.getUser().getName())
+                .name(user.getName())
                 .body(body)
                 .build();
     }
@@ -39,7 +40,6 @@ public class CommentService {
     public void deleteComment(Long commentId){
         Optional<Comment> commentOptional = commentRepository.findById(commentId);
         Comment comment = commentOptional.orElseThrow(() -> new NotFoundException("댓글을 찾을 수 없습니다."));
-        comment.getPost().getComments().remove(comment);
         commentRepository.delete(comment);
     }
 }

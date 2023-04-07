@@ -27,13 +27,16 @@ public class Comment {
     @JoinColumn(name = "users_id")
     private UserEntity user;
 
+    private String username;
+
     private String body;
 
-    public void setRegisterComment(Post post, UserEntity user, String body) {
+    public void setRegisterComment(Post post, UserEntity user, String body,String username) {
         this.post=post;
         this.post.addComment(this);
         this.user=user;
         this.user.addComment(this);
         this.body=body;
+        this.username=username;
     }
 }

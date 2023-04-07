@@ -28,7 +28,6 @@ class CommentServiceTest {
     PostRepository postRepository;
     @Autowired
     CommentService commentService;
-
     @Autowired
     CommentRepository commentRepository;
 
@@ -43,11 +42,11 @@ class CommentServiceTest {
         Long commentId2  = leaveComment(postId, "댓글2").getCommentId();
 
         commentService.deleteComment(commentId1);
-
-        assertEquals(post.getComments().size(),1);
+        assertEquals(postService.getCommentList(postId).size(),1);
         assertEquals(Optional.empty(),commentRepository.findById(commentId1));
 
     }
+
 
     private ResponsePostRegister createAndGetResponsePostRegister() {
         PostDto postDto=PostDto.builder()

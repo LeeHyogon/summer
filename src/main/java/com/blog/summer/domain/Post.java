@@ -1,12 +1,8 @@
 package com.blog.summer.domain;
 
 
-import com.blog.summer.repository.CommentRepository;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -16,12 +12,6 @@ import java.util.List;
 @Getter
 public class Post extends BaseTimeEntity {
 
-    private CommentRepository commentRepository;
-
-    @Autowired
-    public Post(CommentRepository commentRepository) {
-        this.commentRepository = commentRepository;
-    }
 
     @Id
     @GeneratedValue
@@ -52,10 +42,8 @@ public class Post extends BaseTimeEntity {
         this.comments.add(comment);
     }
 
-    public List<Comment> getComments() {
-        // 댓글 리스트를 조회할 때마다 게시물의 댓글 리스트를 갱신합니다.
-        comments = commentRepository.findByPost(this);
-        return comments;
+    public IllegalAccessException getComments() {
+        return new IllegalAccessException("사용금지 서비스기능으로 사용하세요");
     }
 
     @Builder

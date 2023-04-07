@@ -64,6 +64,8 @@ class PostServiceTest {
         assertEquals(Optional.empty(),postRepository.findById(postId));
 
     }
+
+
     private ResponseCommentRegister leaveComment(Long postId,String body) {
          return commentService.createComment(CommentDto.builder()
                 .postId(postId)

@@ -9,10 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter
 public class Post extends BaseTimeEntity {
-
-
     @Id
     @GeneratedValue
     @Column(name = "post_id")
@@ -28,6 +25,26 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "users_id")
     private UserEntity user;
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public UserEntity getUser() {
+        return user;
+    }
+
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
@@ -42,9 +59,7 @@ public class Post extends BaseTimeEntity {
         this.comments.add(comment);
     }
 
-    public IllegalAccessException getComments() {
-        return new IllegalAccessException("사용금지 서비스기능으로 사용하세요");
-    }
+
 
     @Builder
     public Post(String title, String content, String categoryName) {

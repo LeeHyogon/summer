@@ -66,10 +66,13 @@ class PostServiceTest {
     }
 
 
+
     private ResponseCommentRegister leaveComment(Long postId,String body) {
          return commentService.createComment(CommentDto.builder()
                 .postId(postId)
                 .body(body)
                 .build());
     }
+
+
 }

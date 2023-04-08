@@ -5,6 +5,7 @@ import com.blog.summer.domain.Comment;
 import com.blog.summer.domain.Post;
 import com.blog.summer.domain.UserEntity;
 import com.blog.summer.dto.comment.CommentDto;
+import com.blog.summer.dto.comment.CommentStatus;
 import com.blog.summer.dto.comment.ResponseCommentRegister;
 import com.blog.summer.exception.NotFoundException;
 import com.blog.summer.repository.CommentRepository;
@@ -27,7 +28,7 @@ public class CommentService {
         Post post = postOptional.orElseThrow(() -> new NotFoundException("게시글이 존재하지 않습니다."));
         Comment comment = new Comment();
         UserEntity user = post.getUser();
-        comment.setRegisterComment(post,user,body,user.getName());
+        comment.setRegisterComment(post,user,body,user.getName(), CommentStatus.REGISTERED);
         commentRepository.save(comment);
         return ResponseCommentRegister.builder()
                 .commentId(comment.getId())

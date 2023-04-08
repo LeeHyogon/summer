@@ -1,13 +1,11 @@
 package com.blog.summer.domain;
 
 
-import lombok.Builder;
+import com.blog.summer.dto.comment.CommentStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Optional;
-import java.util.function.Consumer;
 
 @Entity
 @Getter
@@ -31,12 +29,20 @@ public class Comment {
 
     private String body;
 
-    public void setRegisterComment(Post post, UserEntity user, String body,String username) {
+    @Enumerated(EnumType.STRING)
+    private CommentStatus status;
+
+    public void setStatus(CommentStatus status) {
+        this.status = status;
+    }
+
+    public void setRegisterComment(Post post, UserEntity user, String body, String username, CommentStatus registered) {
         this.post=post;
         this.post.addComment(this);
         this.user=user;
         this.user.addComment(this);
         this.body=body;
         this.username=username;
+        this.status=registered;
     }
 }

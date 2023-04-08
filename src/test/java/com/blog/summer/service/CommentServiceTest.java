@@ -64,4 +64,14 @@ class CommentServiceTest {
                 .body(body)
                 .build());
     }
+
+    @Test
+    @Transactional
+    public void multibagExceptionCheck() throws Exception {
+        //given
+
+        //when
+
+        //then
+    }
 }

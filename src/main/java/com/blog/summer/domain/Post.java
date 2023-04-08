@@ -3,12 +3,16 @@ package com.blog.summer.domain;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
+@Getter
 public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue
@@ -25,30 +29,12 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "users_id")
     private UserEntity user;
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public String getCategoryName() {
-        return categoryName;
-    }
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @BatchSize(size = 10)
     private List<Comment> comments = new ArrayList<>();
 
     public Post() {}
+
 
     public void setUser(UserEntity user) {
         this.user=user;
@@ -58,8 +44,6 @@ public class Post extends BaseTimeEntity {
     public void addComment(Comment comment) {
         this.comments.add(comment);
     }
-
-
 
     @Builder
     public Post(String title, String content, String categoryName) {

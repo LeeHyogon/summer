@@ -15,13 +15,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update #create update none
-    show-sql: true
     properties:
       hibernate:
+        #show-sql: true
         format_sql: true
-org:
-  hibernate:
-    type: trace
+        use_wql_comments: true
+        default_batch_fetch_size: 100
+logging.level:
+  org.hibernate.SQL: debug
+
+
 
 token:
   expiration_time: 86400000

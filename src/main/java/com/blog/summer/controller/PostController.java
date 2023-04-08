@@ -1,21 +1,30 @@
 package com.blog.summer.controller;
 
 
+import com.blog.summer.domain.Comment;
+import com.blog.summer.domain.Post;
+import com.blog.summer.dto.comment.ResponseComment;
 import com.blog.summer.dto.post.PostDto;
 import com.blog.summer.dto.post.RequestPostRegister;
 import com.blog.summer.dto.post.ResponsePostRegister;
+import com.blog.summer.exception.NotFoundException;
+import com.blog.summer.repository.PostRepository;
 import com.blog.summer.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 @RestController
 @RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
-
+    private final PostRepository postRepository;
     @PostMapping("/posts")
     public ResponseEntity<ResponsePostRegister> postRegister(@RequestBody RequestPostRegister requestPostRegister) {
 
@@ -34,5 +43,8 @@ public class PostController {
         postService.deletePost(postId);
         return ResponseEntity.ok().build();
     }
-
+    @GetMapping("/{postId}/comments")
+    public List<ResponseComment> getCommentsByPostId(@PathVariable Long postId) {
+        return postService.getCommentList(postId);
+    }
 }

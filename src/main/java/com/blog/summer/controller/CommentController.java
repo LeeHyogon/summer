@@ -2,9 +2,11 @@ package com.blog.summer.controller;
 
 
 import com.blog.summer.domain.Comment;
+import com.blog.summer.domain.UserEntity;
 import com.blog.summer.dto.comment.CommentDto;
 import com.blog.summer.dto.comment.RequestCommentRegister;
 import com.blog.summer.dto.comment.ResponseCommentRegister;
+import com.blog.summer.repository.UserRepository;
 import com.blog.summer.service.CommentService;
 import com.blog.summer.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +15,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class CommentController {
 
     private final PostService postService;
     private final CommentService commentService;
+    private final UserRepository userRepository;
 
     @PostMapping("/comment")
     public ResponseEntity<ResponseCommentRegister> commentRegister(@RequestBody RequestCommentRegister commentRegister){
@@ -35,5 +40,15 @@ public class CommentController {
     public ResponseEntity<?> deletePost(@PathVariable Long commentId){
         commentService.deleteComment(commentId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/comments/{userId}")
+    public void getCommentList(@PathVariable String userId){
+        UserEntity user = userRepository.findByUserId(userId);
+        List<Comment> comments = user.getComments();
+        for (Comment comment : comments) {
+            System.out.println("comment = " + comment);
+        }
+        return ;
     }
 }

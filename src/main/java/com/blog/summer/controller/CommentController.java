@@ -42,13 +42,5 @@ public class CommentController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/comments/{userId}")
-    public void getCommentList(@PathVariable String userId){
-        UserEntity user = userRepository.findByUserId(userId);
-        List<Comment> comments = user.getComments();
-        for (Comment comment : comments) {
-            System.out.println("comment = " + comment);
-        }
-        return ;
-    }
+
 }

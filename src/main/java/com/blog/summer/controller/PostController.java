@@ -15,14 +15,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 public class PostController {
 
+    private final EntityManager em;
     private final PostService postService;
     private final PostRepository postRepository;
     @PostMapping("/posts")
@@ -43,8 +46,7 @@ public class PostController {
         postService.deletePost(postId);
         return ResponseEntity.ok().build();
     }
-    @GetMapping("/{postId}/comments")
-    public List<ResponseComment> getCommentsByPostId(@PathVariable Long postId) {
-        return postService.getCommentList(postId);
-    }
+
+
+
 }

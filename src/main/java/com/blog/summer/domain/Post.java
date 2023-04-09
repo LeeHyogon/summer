@@ -27,8 +27,7 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "users_id")
     private UserEntity user;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
-    @BatchSize(size = 10)
+    @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
     public Post() {}

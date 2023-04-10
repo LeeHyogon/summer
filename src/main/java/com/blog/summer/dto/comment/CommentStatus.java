@@ -7,6 +7,4 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum CommentStatus {
     REGISTERED, DELETED
-
-
 }

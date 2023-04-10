@@ -9,5 +9,4 @@ import lombok.Data;
 public class ResponseFavoriteClick {
     Long postId;
     String userId;
-    Boolean aBoolean;
 }

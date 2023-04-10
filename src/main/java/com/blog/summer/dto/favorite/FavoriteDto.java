@@ -8,5 +8,4 @@ import lombok.Data;
 public class FavoriteDto {
     Long postId;
     String userId;
-    Boolean aBoolean;
 }

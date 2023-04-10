@@ -1,15 +1,15 @@
 package com.blog.summer.domain;
 
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Favorite {
     @Id
     @GeneratedValue
@@ -20,19 +20,14 @@ public class Favorite {
     @JoinColumn(name = "post_id")
     private Post favoritePost;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
     private UserEntity favoriteUser;
 
-    private Boolean aBoolean;
 
-    public void setAddFavorite(Post post, UserEntity user, Boolean aBoolean) {
+    public void setAddFavorite(Post post) {
         this.favoritePost=post;
         this.favoritePost.addFavorite(this);
-        this.favoriteUser=user;
-        this.favoriteUser.addFavorite(this);
-        this.aBoolean=aBoolean;
     }
 }
 

@@ -1,4 +1,4 @@
-package com.blog.summer.dto;
+package com.blog.summer.dto.favorite;
 
 
 import lombok.Data;
@@ -7,5 +7,4 @@ import lombok.Data;
 public class RequestFavorite {
     Long postId;
     String userId;
-    Boolean aBoolean;
 }

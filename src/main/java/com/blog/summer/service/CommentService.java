@@ -23,8 +23,7 @@ public class CommentService {
     public ResponseCommentRegister createComment(CommentDto commentDto) {
         Long postId = commentDto.getPostId();
         String body = commentDto.getBody();
-        Optional<Post> postOptional = postRepository.findByIdWithUser(postId);
-        Post post = postOptional.orElseThrow(() -> new NotFoundException("게시글이 존재하지 않습니다."));
+        Post post = postRepository.findByIdWithUser(postId).orElseThrow(() -> new NotFoundException("게시글이 존재하지 않습니다."));
         Comment comment = new Comment();
         UserEntity user = post.getPostUser();
         comment.setRegisterComment(post,user,body,user.getName(), CommentStatus.REGISTERED);

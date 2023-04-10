@@ -44,12 +44,7 @@ public class PostController {
         postService.deletePost(postId);
         return ResponseEntity.ok().build();
     }
-
-    @GetMapping("/api/posts")
-    public void getPostAll(){
-        postQueryRepository.findAllWithUserCommentFavorite();
-    }
-
+    
     @GetMapping("/api/postAll")
     public List<PostAllDto> getPostLazyAll(){
         List<Post> posts = postRepository.findAll();

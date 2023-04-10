@@ -24,11 +24,14 @@ public class UserEntity extends BaseTimeEntity{
 
     private String encryptedPwd;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "postUser")
     private List<Post> posts=new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "commentUser")
     private List<Comment> comments=new ArrayList<>();
+
+    @OneToMany(mappedBy = "favoriteUser")
+    private List<Favorite> favorites=new ArrayList<>();
 
     public UserEntity() {}
 
@@ -49,5 +52,9 @@ public class UserEntity extends BaseTimeEntity{
 
     public void setEncryptedPwd(String encode) {
         this.encryptedPwd=encode;
+    }
+
+    public void addFavorite(Favorite favorite) {
+        this.favorites.add(favorite);
     }
 }

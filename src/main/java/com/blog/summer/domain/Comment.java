@@ -18,12 +18,12 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private Post post;
+    private Post commentPost;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
-    private UserEntity user;
+    private UserEntity commentUser;
 
     private String username;
 
@@ -37,12 +37,14 @@ public class Comment {
     }
 
     public void setRegisterComment(Post post, UserEntity user, String body, String username, CommentStatus registered) {
-        this.post=post;
-        this.post.addComment(this);
-        this.user=user;
-        this.user.addComment(this);
+        this.commentPost =post;
+        this.commentPost.addComment(this);
+        this.commentUser =user;
+        this.commentUser.addComment(this);
         this.body=body;
         this.username=username;
         this.status=registered;
     }
 }
+
+

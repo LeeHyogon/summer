@@ -10,7 +10,6 @@ import com.blog.summer.dto.comment.ResponseCommentRegister;
 import com.blog.summer.exception.NotFoundException;
 import com.blog.summer.repository.CommentRepository;
 import com.blog.summer.repository.PostRepository;
-import com.blog.summer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,7 @@ public class CommentService {
         Optional<Post> postOptional = postRepository.findByIdWithUser(postId);
         Post post = postOptional.orElseThrow(() -> new NotFoundException("게시글이 존재하지 않습니다."));
         Comment comment = new Comment();
-        UserEntity user = post.getUser();
+        UserEntity user = post.getPostUser();
         comment.setRegisterComment(post,user,body,user.getName(), CommentStatus.REGISTERED);
         commentRepository.save(comment);
         return ResponseCommentRegister.builder()

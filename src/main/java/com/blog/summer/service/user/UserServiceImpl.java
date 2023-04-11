@@ -1,4 +1,4 @@
-package com.blog.summer.service;
+package com.blog.summer.service.user;
 
 import com.blog.summer.domain.UserEntity;
 import com.blog.summer.dto.user.UserDto;

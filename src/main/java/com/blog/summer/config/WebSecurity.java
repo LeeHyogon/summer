@@ -1,7 +1,7 @@
 package com.blog.summer.config;
 
 
-import com.blog.summer.service.UserService;
+import com.blog.summer.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;

@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ResponseComment {
+public class ResponsePostComment {
     private Long postId;
     private String body;
     private String name;

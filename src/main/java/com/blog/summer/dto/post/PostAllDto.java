@@ -37,7 +37,6 @@ public class PostAllDto {
                         .build()).collect(toList());
         favorites=p.getFavorites().stream()
                 .map(favorite -> FavoriteDto.builder()
-                        .aBoolean(favorite.getABoolean())
                         .build()).collect(toList());
     }
 }

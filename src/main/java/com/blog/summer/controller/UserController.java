@@ -2,10 +2,12 @@ package com.blog.summer.controller;
 
 
 import com.blog.summer.domain.UserEntity;
+import com.blog.summer.dto.comment.ResponseUserComment;
 import com.blog.summer.dto.user.RequestUser;
 import com.blog.summer.dto.user.ResponseUser;
 import com.blog.summer.dto.user.UserDto;
-import com.blog.summer.service.UserService;
+import com.blog.summer.service.user.UserQueryService;
+import com.blog.summer.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -20,7 +22,7 @@ import java.util.List;
 public class UserController {
     ModelMapper mapper = new ModelMapper();
     private final UserService userService;
-
+    private final UserQueryService userQueryService;
 
     @PostMapping("/users")
     public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser user){
@@ -50,5 +52,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(returnValue);
     }
 
+    @GetMapping("/users/comments/{userId}")
+    public ResponseEntity<List<ResponseUserComment> > getComment(@PathVariable String userId){
+        List<ResponseUserComment> registeredComment = userQueryService.getRegisteredComment(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(registeredComment);
+    }
 
 }

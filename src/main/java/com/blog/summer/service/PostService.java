@@ -1,6 +1,8 @@
 package com.blog.summer.service;
 
 
+import com.blog.summer.domain.Comment;
+import com.blog.summer.domain.Favorite;
 import com.blog.summer.domain.Post;
 import com.blog.summer.domain.UserEntity;
 import com.blog.summer.dto.comment.CommentStatus;
@@ -12,6 +14,8 @@ import com.blog.summer.repository.PostRepository;
 import com.blog.summer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Iterator;
 
 @Service
 @RequiredArgsConstructor
@@ -41,10 +45,24 @@ public class PostService {
 
     public void deletePostAndMark(Long postId){
         Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
-        post.getComments().forEach(comment -> {
-            comment.setStatus(CommentStatus.DELETED);
-        });
+
+        deletePostComments(post);
+        Iterator<Favorite> iterator = post.getFavorites().iterator();
+        //favorite 부분은 service와 연계해서 어떻게 구현할 지 고민 중 수정 예정
+        while(iterator.hasNext()){
+            Favorite favorite = iterator.next();
+            iterator.remove();
+        }
         postRepository.delete(post);
+    }
+
+    private static void deletePostComments(Post post) {
+        Iterator<Comment> iterator = post.getComments().iterator();
+        while(iterator.hasNext()){
+            Comment comment = iterator.next();
+            comment.setStatus(CommentStatus.DELETED);
+            iterator.remove();
+        }
     }
 
     /*

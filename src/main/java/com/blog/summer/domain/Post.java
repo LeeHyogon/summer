@@ -58,6 +58,9 @@ public class Post extends BaseTimeEntity {
         this.favorites.add(favorite);
     }
 
+    public void removeComment(Comment comment){
+        this.comments.remove(comment);
+    }
     public void removeFavorite(Favorite favorite) {
         favorites.remove(favorite);
     }

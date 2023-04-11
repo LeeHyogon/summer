@@ -2,6 +2,7 @@ package com.blog.summer.service;
 
 import com.blog.summer.domain.UserEntity;
 import com.blog.summer.dto.user.UserDto;
+import com.blog.summer.exception.NotFoundException;
 import com.blog.summer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -25,10 +26,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findByEmail(username);
-        if (userEntity == null) {
-            throw new UsernameNotFoundException(username);
-        }
+        UserEntity userEntity = userRepository.findByEmail(username)
+                .orElseThrow(()->new UsernameNotFoundException(username));
+
         return new User(userEntity.getEmail(), userEntity.getEncryptedPwd(),
                 true, true, true, true,
                 new ArrayList<>());
@@ -52,7 +52,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserByUserId(String userId) {
-        UserEntity userEntity = userRepository.findByUserId(userId);
+        UserEntity userEntity = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException("사용자를 찾을수없습니다"));;
 
         if(userEntity==null)
             throw new UsernameNotFoundException("User not found");
@@ -68,8 +69,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserDetailsByEmail(String email) {
-        UserEntity userEntity = userRepository.findByEmail(email);
-
+        UserEntity userEntity = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("사용자를 찾을수없습니다"));;
         if(userEntity ==null)
             throw new UsernameNotFoundException(email);
 

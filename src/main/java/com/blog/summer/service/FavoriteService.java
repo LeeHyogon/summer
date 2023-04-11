@@ -24,8 +24,8 @@ public class FavoriteService {
     public ResponseFavoriteClick createFavorite(FavoriteDto favoriteDto) {
         Long postId = favoriteDto.getPostId();
         String userId = favoriteDto.getUserId();
-        Post post = postRepository.findByIdWithUserComment(postId).orElseThrow(() -> new NotFoundException("게시물을 찾을수없습니다"));
-        UserEntity user = userRepository.findByUserId(userId);
+        Post post = postRepository.findByIdWithUserComment(postId).orElseThrow(() -> new NotFoundException("게시물을 찾을 수 없습니다"));
+        UserEntity user = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));;
         Favorite favorite = new Favorite();
         favorite.setAddFavorite(post);
         favoriteRepository.save(favorite);
@@ -38,8 +38,8 @@ public class FavoriteService {
         Long postId = favoriteDto.getPostId();
         String userId = favoriteDto.getUserId();
         Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("게시물을 찾을 수 없습니다."));
-        UserEntity user = userRepository.findByUserId(userId);
-        if(user==null){ new NotFoundException("사용자를 찾을 수 없습니다.");}
+        UserEntity user = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("사용자를 찾을수없습니다"));;
+
 
         favoriteRepository.findByFavoritePostAndFavoriteUser(post, user).ifPresentOrElse(
                 (favorite)-> new NotFoundException("User has not liked this post"),
@@ -57,8 +57,7 @@ public class FavoriteService {
         Long postId = favoriteDto.getPostId();
         String userId = favoriteDto.getUserId();
         Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("게시물을 찾을 수 없습니다."));
-        UserEntity user = userRepository.findByUserId(userId);
-        if(user==null){ new NotFoundException("사용자를 찾을 수 없습니다.");}
+        UserEntity user = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("사용자를 찾을수없습니다"));
         Favorite favorite = favoriteRepository.findByFavoritePostAndFavoriteUser(post, user)
                 .orElseThrow(() -> new NotFoundException("User has not liked this pos"));
         post.removeFavorite(favorite);

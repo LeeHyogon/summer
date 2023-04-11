@@ -40,10 +40,18 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responsePostRegister);
     }
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<?> deletePost(@PathVariable Long postId){
+    public ResponseEntity<?> deletePostAndList(@PathVariable Long postId){
+        
         postService.deletePost(postId);
         return ResponseEntity.ok().build();
     }
+    @DeleteMapping("/posts/mark/{postId}")
+    public ResponseEntity<?> deletePostAndMarkAsComment(@PathVariable Long postId){
+        postService.deletePost(postId);
+        return ResponseEntity.ok().build();
+    }
+
+
 
     @GetMapping("/api/postAll")
     public List<PostAllDto> getPostLazyAll(){

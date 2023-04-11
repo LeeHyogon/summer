@@ -29,7 +29,7 @@ public class PostService {
                 .build();
 
         //null 처리 예정
-        UserEntity user = userRepository.findByUserId(postDto.getUserId());
+        UserEntity user = userRepository.findByUserId(postDto.getUserId()).orElseThrow(() -> new NotFoundException("사용자를 찾을수없습니다"));;
 
         post.setPostUser(user);
         postRepository.save(post);

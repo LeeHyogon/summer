@@ -10,6 +10,7 @@ import com.blog.summer.dto.post.PostDto;
 import com.blog.summer.dto.post.ResponsePostRegister;
 import com.blog.summer.exception.NotFoundException;
 import com.blog.summer.repository.CommentRepository;
+import com.blog.summer.repository.FavoriteRepository;
 import com.blog.summer.repository.PostRepository;
 import com.blog.summer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
-
+    private final FavoriteRepository favoriteRepository;
 
     public ResponsePostRegister createPost(PostDto postDto) {
         Post post = Post.builder()
@@ -47,13 +48,17 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
 
         deletePostComments(post);
+        deletePostFavorite(post);
+        postRepository.delete(post);
+    }
+
+    private static void deletePostFavorite(Post post) {
         Iterator<Favorite> iterator = post.getFavorites().iterator();
         //favorite 부분은 service와 연계해서 어떻게 구현할 지 고민 중 수정 예정
         while(iterator.hasNext()){
             Favorite favorite = iterator.next();
             iterator.remove();
         }
-        postRepository.delete(post);
     }
 
     private static void deletePostComments(Post post) {

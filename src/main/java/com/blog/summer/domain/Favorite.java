@@ -29,6 +29,12 @@ public class Favorite {
         this.favoritePost=post;
         this.favoritePost.addFavorite(this);
     }
+
+    public void setRegisterFavorite(Post post, UserEntity user) {
+        this.favoritePost=post;
+        this.favoritePost.addFavorite(this);
+        this.favoriteUser=user;
+    }
 }
 
 

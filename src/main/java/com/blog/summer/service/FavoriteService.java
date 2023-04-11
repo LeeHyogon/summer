@@ -44,12 +44,9 @@ public class FavoriteService {
         favoriteRepository.findByFavoritePostAndFavoriteUser(post, user).ifPresentOrElse(
                 (favorite)-> new NotFoundException("User has not liked this post"),
                 ()->{
-                    Favorite favorite=Favorite.builder()
-                            .favoritePost(post)
-                            .favoriteUser(user)
-                            .build();
+                    Favorite favorite=new Favorite();
+                    favorite.setRegisterFavorite(post,user);
                     favoriteRepository.save(favorite);
-                    post.addFavorite(favorite);
                 }
         );
     }

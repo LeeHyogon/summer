@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserByUserId(String userId) {
         UserEntity userEntity = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new NotFoundException("사용자를 찾을수없습니다"));;
+                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다"));;
 
         if(userEntity==null)
             throw new UsernameNotFoundException("User not found");
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserDetailsByEmail(String email) {
         UserEntity userEntity = userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("사용자를 찾을수없습니다"));;
+                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다"));;
         if(userEntity ==null)
             throw new UsernameNotFoundException(email);
 

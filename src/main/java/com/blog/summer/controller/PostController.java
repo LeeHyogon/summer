@@ -39,15 +39,10 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responsePostRegister);
     }
+
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<?> deletePostAndList(@PathVariable Long postId){
-        
-        postService.deletePost(postId);
-        return ResponseEntity.ok().build();
-    }
-    @DeleteMapping("/posts/mark/{postId}")
     public ResponseEntity<?> deletePostAndMarkAsComment(@PathVariable Long postId){
-        postService.deletePost(postId);
+        postService.deletePostAndMark(postId);
         return ResponseEntity.ok().build();
     }
 

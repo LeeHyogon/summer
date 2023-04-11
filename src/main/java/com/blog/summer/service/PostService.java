@@ -39,7 +39,7 @@ public class PostService {
         return getResponsePostRegister(postDto, postId, name);
     }
 
-    public void deletePost(Long postId){
+    public void deletePostAndMark(Long postId){
         Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
         post.getComments().forEach(comment -> {
             comment.setStatus(CommentStatus.DELETED);

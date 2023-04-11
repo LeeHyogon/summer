@@ -60,7 +60,7 @@ class PostServiceTest {
         Post post = postOpt.orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
         Long postId = post.getId();
 
-        postService.deletePost(postId);
+        postService.deletePostAndMark(postId);
         assertEquals(Optional.empty(),postRepository.findById(postId));
 
     }

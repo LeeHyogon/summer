@@ -15,6 +15,4 @@ public class PostQueryRepository {
     private final EntityManager em;
 
 
-
-
 }

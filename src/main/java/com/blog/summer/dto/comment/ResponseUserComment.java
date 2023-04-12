@@ -12,5 +12,4 @@ public class ResponseUserComment {
     private String body;
     private String name;
 
-
 }

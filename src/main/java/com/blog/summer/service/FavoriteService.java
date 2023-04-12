@@ -40,9 +40,8 @@ public class FavoriteService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("게시물을 찾을 수 없습니다."));
         UserEntity user = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("사용자를 찾을수없습니다"));;
 
-
         favoriteRepository.findByFavoritePostAndFavoriteUser(post, user).ifPresentOrElse(
-                (favorite)-> new NotFoundException("User has not liked this post"),
+                (favorite)-> new NotFoundException("User already liked this post"),
                 ()->{
                     Favorite favorite=new Favorite();
                     favorite.setRegisterFavorite(post,user);

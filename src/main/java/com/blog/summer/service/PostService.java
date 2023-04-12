@@ -44,7 +44,6 @@ public class PostService {
     public void deletePostAndMark(Long postId){
         Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
         deletePostComments(post);
-        //deletePostFavorite(post);
         commentQueryRepository.deleteCommentsByPostId(postId);
         post.getFavorites().clear();
         favoriteQueryRepository.deleteFavoritesByPostId(postId);
@@ -69,46 +68,6 @@ public class PostService {
             iterator.remove();
         }
     }
-
-    /*
-    public List<ResponseComment> getCommentList(Long postId){
-        Optional<Post> postOpt = postRepository.findById(postId);
-        Post post = postOpt.orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
-        List<Comment> comments = commentRepository.findByPost(post);
-        List<ResponseComment> responseComments = new ArrayList<>();
-        comments.forEach(comment -> {
-            responseComments.add(
-                    ResponseComment.builder()
-                            .body(comment.getBody())
-                            .name(comment.getUsername())
-                            .build()
-            );
-        });
-        return responseComments;
-    }
-    */
-
-    /*
-    public List<ResponseComment> getCommentList(Long postId){
-        Optional<Post> postOpt = postRepository.findById(postId);
-        Post post = postOpt.orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
-        //default_batch_fetch_size 를 설정하고, 삭제 시 Status만 DELETED로 변경해서
-        //쿼리 최적화 테스트 중인데 제대로 작동하지 않음...
-        List<Comment> comments = post.getComments();
-        List<ResponseComment> responseComments = new ArrayList<>();
-        comments.forEach(comment -> {
-            responseComments.add(
-                    ResponseComment.builder()
-                            .body(comment.getBody())
-                            .name(comment.getUsername())
-                            .build()
-            );
-        });
-        return responseComments;
-    }
-     */
-
-
 
     private static ResponsePostRegister getResponsePostRegister(PostDto postDto, Long postId, String name) {
         ResponsePostRegister responsePostRegister= ResponsePostRegister.builder()

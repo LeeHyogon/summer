@@ -16,6 +16,5 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
     Optional<Favorite> findByFavoritePostAndFavoriteUser(Post post, UserEntity user);
 
-    @Query("DELETE FROM Favorite f WHERE f.post.id = :postId")
-    void deleteFavoritePost(@Param("postId") Long postId);
+
 }

@@ -2,14 +2,12 @@ package com.blog.summer.controller;
 
 
 import com.blog.summer.domain.Post;
-import com.blog.summer.dto.post.PostAllDto;
-import com.blog.summer.dto.post.PostDto;
-import com.blog.summer.dto.post.RequestPostRegister;
-import com.blog.summer.dto.post.ResponsePostRegister;
+import com.blog.summer.dto.post.*;
 import com.blog.summer.repository.PostQueryRepository;
 import com.blog.summer.repository.PostRepository;
 import com.blog.summer.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,5 +53,11 @@ public class PostController {
                 .map(p->new PostAllDto(p))
                 .collect(Collectors.toList());
         return result;
+    }
+
+    @GetMapping("/postList")
+    public Page<PostListDto> getPostListOrderByCreatedAt(@RequestParam Integer page,
+                                                         @RequestParam Integer size){
+        return postService.getPostAllByCreatedAt(page, size);
     }
 }

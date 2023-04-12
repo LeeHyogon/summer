@@ -7,10 +7,14 @@ import com.blog.summer.domain.Post;
 import com.blog.summer.domain.UserEntity;
 import com.blog.summer.dto.comment.CommentStatus;
 import com.blog.summer.dto.post.PostDto;
+import com.blog.summer.dto.post.PostListDto;
 import com.blog.summer.dto.post.ResponsePostRegister;
 import com.blog.summer.exception.NotFoundException;
 import com.blog.summer.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
@@ -49,6 +53,17 @@ public class PostService {
         favoriteQueryRepository.deleteFavoritesByPostId(postId);
         postRepository.delete(post);
     }
+    public Page<PostListDto> getPostAllByCreatedAt(Integer page,Integer size){
+        PageRequest pageRequest=PageRequest.of(page, size, Sort.Direction.DESC,"createdAt");
+        Page<Post> posts = postRepository.findAllWithUserCountBy(pageRequest);
+        Page<PostListDto> toMap = posts.map(post -> PostListDto.builder()
+                .title(post.getTitle())
+                .categoryName(post.getCategoryName())
+                .createdAt(post.getCreatedAt())
+                .username(post.getPostUser().getName())
+                .build());
+        return toMap;
+    }
 
     private static void deletePostFavorite(Post post) {
         Iterator<Favorite> iterator = post.getFavorites().iterator();
@@ -79,6 +94,7 @@ public class PostService {
                 .build();
         return responsePostRegister;
     }
+
 
 
 

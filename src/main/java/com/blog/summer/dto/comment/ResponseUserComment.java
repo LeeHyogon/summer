@@ -1,7 +1,6 @@
 package com.blog.summer.dto.comment;
 
 
-import com.blog.summer.domain.Comment;
 import lombok.Builder;
 import lombok.Data;
 

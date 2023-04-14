@@ -12,20 +12,25 @@ import com.blog.summer.dto.post.ResponsePostRegister;
 import com.blog.summer.exception.NotFoundException;
 import com.blog.summer.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final CommentQueryRepository commentQueryRepository;
     private final FavoriteQueryRepository favoriteQueryRepository;
+    private final RedisTemplate<String,Long> redisTemplate;
 
     public ResponsePostRegister createPost(PostDto postDto) {
         Post post = Post.builder()
@@ -34,9 +39,9 @@ public class PostService {
                 .categoryName(postDto.getCategoryName())
                 .build();
 
-        //null 처리 예정
-        UserEntity user = userRepository.findByUserId(postDto.getUserId()).orElseThrow(() -> new NotFoundException("사용자를 찾을수없습니다"));;
 
+        UserEntity user = userRepository.findByUserId(postDto.getUserId()).orElseThrow(() ->
+                new NotFoundException("사용자를 찾을 수 없습니다"));
         post.setPostUser(user);
         postRepository.save(post);
         Long postId=post.getId();
@@ -95,7 +100,22 @@ public class PostService {
         return responsePostRegister;
     }
 
-
+    public void addViewCntToRedis(Long postId) {
+        String key = "post:" + postId + ":views";
+        //hint 캐시에 값이 없으면 레포지토리에서 조회 있으면 값을 증가시킨다.
+        ValueOperations valueOperations = redisTemplate.opsForValue();
+        if(valueOperations.get(key)==null){
+            valueOperations.set(
+                    key,
+                    postRepository.findById(postId)
+                            .orElseThrow(() -> new NotFoundException("게시물을 찾을 수 없습니다."))
+                            .getViews());
+        }
+        else {
+            valueOperations.increment(key);
+        }
+        log.info("value:{}",valueOperations.get(key));
+    }
 
 
 }

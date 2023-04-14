@@ -24,6 +24,8 @@ public class Post extends BaseTimeEntity {
 
     private String categoryName;
 
+    //Redis 캐시에서는 primitive type 권장?
+    private Long views;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
@@ -49,6 +51,7 @@ public class Post extends BaseTimeEntity {
 
     @Builder
     public Post(String title, String content, String categoryName) {
+        this.views =1L;
         this.title = title;
         this.content = content;
         this.categoryName = categoryName;

@@ -29,7 +29,7 @@ public class RedisConfig extends CachingConfigurerSupport {
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
         RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(10))
+                .entryTtl(Duration.ofMinutes(1)) //테스트 위해서 일단 짧은 시간 설정
                 .disableCachingNullValues();
 
         return RedisCacheManager.builder(connectionFactory)

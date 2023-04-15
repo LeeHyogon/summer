@@ -18,8 +18,8 @@ import java.time.Duration;
 @EnableCaching
 public class RedisConfig extends CachingConfigurerSupport {
     @Bean
-    public RedisTemplate<String, Long> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, Long> template = new RedisTemplate<>();
+    public RedisTemplate<?, ?> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<byte[], byte[]> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new StringRedisSerializer());

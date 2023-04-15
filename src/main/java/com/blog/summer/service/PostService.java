@@ -35,7 +35,7 @@ public class PostService {
     private final PostQueryRepository postQueryRepository;
     private final CommentQueryRepository commentQueryRepository;
     private final FavoriteQueryRepository favoriteQueryRepository;
-    private final RedisTemplate<String,Long> redisTemplate;
+    private final RedisTemplate redisTemplate;
 
     public ResponsePostRegister createPost(PostDto postDto) {
         Post post = Post.builder()
@@ -122,10 +122,11 @@ public class PostService {
     public void addViewCntToRedis(Long postId) {
         String key = getKey(postId);
         //hint 캐시에 값이 없으면 레포지토리에서 조회 있으면 값을 증가시킨다.
-        ValueOperations<String,Long> valueOperations = redisTemplate.opsForValue();
+        ValueOperations valueOperations = redisTemplate.opsForValue();
         if(valueOperations.get(key)==null){
-            valueOperations.set( key, postRepository.findById(postId)
-                    .orElseThrow(() -> new NotFoundException("게시물을 찾을 수 없습니다.")).getViews(),
+            valueOperations.set( key,
+                    String.valueOf(postRepository.findById(postId)
+                    .orElseThrow(() -> new NotFoundException("게시물을 찾을 수 없습니다.")).getViews()),
                     Duration.ofMinutes(10));
             valueOperations.increment(key);
         }
@@ -151,7 +152,8 @@ public class PostService {
             String key = it.next();
             String numericPart = key.substring(key.indexOf(":") + 1, key.lastIndexOf(":"));
             Long postId = Long.parseLong(numericPart);
-            Long views = redisTemplate.opsForValue().get(key);
+            String s = (String) redisTemplate.opsForValue().get(key);
+            Long views = Long.parseLong(s);
             //
             postQueryRepository.addViewCntFromRedis(postId,views);
             redisTemplate.delete(key);

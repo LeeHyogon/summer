@@ -44,7 +44,13 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
-
+    @GetMapping("/posts/{postId}")
+    public ResponseEntity<ResponsePostOne> getPostOne(
+            @PathVariable Long postId) {
+        postService.addViewCntToRedis(postId);
+        ResponsePostOne postOne = postService.getPostOne(postId);
+        return ResponseEntity.status(HttpStatus.OK).body(postOne);
+    }
 
     @GetMapping("/api/postAll")
     public List<PostAllDto> getPostLazyAll(){

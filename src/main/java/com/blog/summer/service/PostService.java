@@ -8,6 +8,7 @@ import com.blog.summer.domain.UserEntity;
 import com.blog.summer.dto.comment.CommentStatus;
 import com.blog.summer.dto.post.PostDto;
 import com.blog.summer.dto.post.PostListDto;
+import com.blog.summer.dto.post.ResponsePostOne;
 import com.blog.summer.dto.post.ResponsePostRegister;
 import com.blog.summer.exception.NotFoundException;
 import com.blog.summer.repository.*;
@@ -18,9 +19,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.Iterator;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -28,6 +32,7 @@ import java.util.Iterator;
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final PostQueryRepository postQueryRepository;
     private final CommentQueryRepository commentQueryRepository;
     private final FavoriteQueryRepository favoriteQueryRepository;
     private final RedisTemplate<String,Long> redisTemplate;
@@ -40,8 +45,8 @@ public class PostService {
                 .build();
 
 
-        UserEntity user = userRepository.findByUserId(postDto.getUserId()).orElseThrow(() ->
-                new NotFoundException("사용자를 찾을 수 없습니다"));
+        UserEntity user = userRepository.findByUserId(postDto.getUserId())
+                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다"));
         post.setPostUser(user);
         postRepository.save(post);
         Long postId=post.getId();
@@ -49,15 +54,29 @@ public class PostService {
 
         return getResponsePostRegister(postDto, postId, name);
     }
+    public ResponsePostOne getPostOne(Long postId){
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
+        ResponsePostOne responsePostOne= ResponsePostOne.builder()
+                .postId(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .name(post.getPostUser().getName())
+                .categoryName(post.getCategoryName())
+                .build();
+        return responsePostOne;
+    }
 
     public void deletePostAndMark(Long postId){
-        Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
         deletePostComments(post);
         commentQueryRepository.deleteCommentsByPostId(postId);
         post.getFavorites().clear();
         favoriteQueryRepository.deleteFavoritesByPostId(postId);
         postRepository.delete(post);
     }
+
     public Page<PostListDto> getPostAllByCreatedAt(Integer page,Integer size){
         PageRequest pageRequest=PageRequest.of(page, size, Sort.Direction.DESC,"createdAt");
         Page<Post> posts = postRepository.findAllWithUserCountBy(pageRequest);
@@ -101,21 +120,42 @@ public class PostService {
     }
 
     public void addViewCntToRedis(Long postId) {
-        String key = "post:" + postId + ":views";
+        String key = getKey(postId);
         //hint 캐시에 값이 없으면 레포지토리에서 조회 있으면 값을 증가시킨다.
-        ValueOperations valueOperations = redisTemplate.opsForValue();
+        ValueOperations<String,Long> valueOperations = redisTemplate.opsForValue();
         if(valueOperations.get(key)==null){
-            valueOperations.set(
-                    key,
-                    postRepository.findById(postId)
-                            .orElseThrow(() -> new NotFoundException("게시물을 찾을 수 없습니다."))
-                            .getViews());
-        }
-        else {
+            valueOperations.set( key, postRepository.findById(postId)
+                    .orElseThrow(() -> new NotFoundException("게시물을 찾을 수 없습니다.")).getViews(),
+                    Duration.ofMinutes(10));
             valueOperations.increment(key);
         }
+        /*
+        else {
+            valueOperations.increment(key); //만료시간 지나기 전까진 동일한 key에 대해 중복으로 increment 되지 않는다.
+        }
+        */
         log.info("value:{}",valueOperations.get(key));
     }
 
 
+    private static String getKey(Long postId) {
+        return "post:" + postId + ":views";
+    }
+
+    //3분마다 자동 실행해주는 스케쥴러
+    @Scheduled(cron = "0 0/1 * * * ?")
+    public void deleteViewCntCacheFromRedis() {
+        Set<String> redisKeys = redisTemplate.keys("post:*:views");
+        Iterator<String> it = redisKeys.iterator();
+        while (it.hasNext()) {
+            String key = it.next();
+            String numericPart = key.substring(key.indexOf(":") + 1, key.lastIndexOf(":"));
+            Long postId = Long.parseLong(numericPart);
+            Long views = redisTemplate.opsForValue().get(key);
+            //
+            postQueryRepository.addViewCntFromRedis(postId,views);
+            redisTemplate.delete(key);
+            redisTemplate.delete("post:"+postId+"views");
+        }
+    }
 }

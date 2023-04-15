@@ -15,4 +15,7 @@ public class PostQueryRepository {
     private final EntityManager em;
 
 
+    public void addViewCntFromRedis(Long postId, Long views) {
+
+    }
 }

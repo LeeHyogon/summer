@@ -35,13 +35,13 @@ public class CommentController {
         ResponseCommentRegister responseComment = commentService.createComment(commentDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseComment);
+
     }
     @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<?> deletePost(@PathVariable Long commentId){
         commentService.deleteComment(commentId);
         return ResponseEntity.ok().build();
     }
-
 
 
 

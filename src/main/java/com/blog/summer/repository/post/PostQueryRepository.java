@@ -13,6 +13,7 @@ import java.util.List;
 import static com.blog.summer.domain.QPost.post;
 
 
+@Repository
 @RequiredArgsConstructor
 public class PostQueryRepository {
 

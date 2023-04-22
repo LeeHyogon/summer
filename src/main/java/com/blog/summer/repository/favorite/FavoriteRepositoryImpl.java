@@ -1,23 +1,34 @@
 package com.blog.summer.repository.favorite;
 
 
+import com.blog.summer.domain.QFavorite;
+import com.blog.summer.domain.QPost;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 
-@Repository
+import static com.blog.summer.domain.QFavorite.favorite;
+import static com.blog.summer.domain.QPost.post;
+
 @RequiredArgsConstructor
 public class FavoriteRepositoryImpl implements FavoriteRepositoryCustom{
 
     private final EntityManager em;
+    private final JPAQueryFactory queryFactory;
     @Transactional
     @Override
     public void deleteFavoritesByPostId(Long postId) {
+        /*
         Query query = em.createNativeQuery("DELETE FROM favorite WHERE post_id = :postId");
         query.setParameter("postId", postId);
         query.executeUpdate();
+        */
+        queryFactory
+                .delete(favorite)
+                .where(favorite.favoritePost.id.eq(postId))
+                .execute();
     }
 }

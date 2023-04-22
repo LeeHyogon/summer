@@ -30,6 +30,7 @@ public class CommentController {
 
         CommentDto commentDto= CommentDto.builder()
                 .postId(commentRegister.getPostId())
+                .userId(commentRegister.getUserId())
                 .body(commentRegister.getBody())
                 .build();
         ResponseCommentRegister responseComment = commentService.createComment(commentDto);

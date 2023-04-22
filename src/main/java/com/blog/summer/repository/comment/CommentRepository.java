@@ -15,6 +15,8 @@ public interface CommentRepository extends JpaRepository<Comment,Long>,CommentRe
 
     List<Comment> findByCommentPost(Post post);
 
+    /*
     @Query("select c FROM Comment c WHERE c.status = 'REGISTERED' AND c.commentUser = :user")
     List<Comment> findRegisteredByCommentUser(UserEntity user);
+     */
 }

@@ -8,5 +8,6 @@ import lombok.Data;
 public class CommentDto {
 
     private Long postId;
+    private String userId;
     private String body;
 }

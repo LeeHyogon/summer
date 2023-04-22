@@ -11,6 +11,7 @@ import com.blog.summer.repository.PostRepository;
 import com.blog.summer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Optional;
 

@@ -7,14 +7,11 @@ import com.blog.summer.domain.UserEntity;
 import com.blog.summer.dto.comment.CommentDto;
 import com.blog.summer.dto.comment.CommentStatus;
 import com.blog.summer.dto.comment.ResponseCommentRegister;
-import com.blog.summer.dto.user.UserDto;
 import com.blog.summer.exception.NotFoundException;
 import com.blog.summer.repository.UserRepository;
 import com.blog.summer.repository.comment.CommentRepository;
 import com.blog.summer.repository.post.PostRepository;
-import com.blog.summer.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,7 +20,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-    
+
     public ResponseCommentRegister createComment(CommentDto commentDto) {
         Long postId = commentDto.getPostId();
         String body = commentDto.getBody();

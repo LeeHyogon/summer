@@ -1,4 +1,4 @@
-package com.blog.summer.repository;
+package com.blog.summer.repository.post;
 
 import com.blog.summer.domain.Post;
 import org.springframework.data.domain.Page;

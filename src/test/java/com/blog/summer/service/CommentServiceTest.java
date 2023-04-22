@@ -6,10 +6,9 @@ import com.blog.summer.dto.comment.ResponseCommentRegister;
 import com.blog.summer.dto.post.PostDto;
 import com.blog.summer.dto.post.ResponsePostRegister;
 import com.blog.summer.exception.NotFoundException;
-import com.blog.summer.repository.CommentRepository;
-import com.blog.summer.repository.PostRepository;
+import com.blog.summer.repository.comment.CommentRepository;
+import com.blog.summer.repository.post.PostRepository;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 

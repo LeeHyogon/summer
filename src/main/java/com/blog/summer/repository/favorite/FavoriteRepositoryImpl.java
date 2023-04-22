@@ -1,4 +1,4 @@
-package com.blog.summer.repository;
+package com.blog.summer.repository.favorite;
 
 
 import lombok.RequiredArgsConstructor;
@@ -10,12 +10,13 @@ import javax.transaction.Transactional;
 
 @Repository
 @RequiredArgsConstructor
-public class CommentQueryRepository {
-    private final EntityManager em;
+public class FavoriteRepositoryImpl implements FavoriteRepositoryCustom{
 
+    private final EntityManager em;
     @Transactional
-    public void deleteCommentsByPostId(Long postId) {
-        Query query = em.createNativeQuery("DELETE FROM comment WHERE post_id = :postId");
+    @Override
+    public void deleteFavoritesByPostId(Long postId) {
+        Query query = em.createNativeQuery("DELETE FROM favorite WHERE post_id = :postId");
         query.setParameter("postId", postId);
         query.executeUpdate();
     }

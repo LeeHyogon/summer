@@ -12,6 +12,10 @@ import com.blog.summer.dto.post.ResponsePostOne;
 import com.blog.summer.dto.post.ResponsePostRegister;
 import com.blog.summer.exception.NotFoundException;
 import com.blog.summer.repository.*;
+import com.blog.summer.repository.comment.CommentRepository;
+import com.blog.summer.repository.favorite.FavoriteRepository;
+import com.blog.summer.repository.post.PostQueryRepository;
+import com.blog.summer.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -33,8 +37,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final PostQueryRepository postQueryRepository;
-    private final CommentQueryRepository commentQueryRepository;
-    private final FavoriteQueryRepository favoriteQueryRepository;
+    private final CommentRepository commentRepository;
+    private final FavoriteRepository favoriteRepository;
     private final RedisTemplate redisTemplate;
 
     public ResponsePostRegister createPost(PostDto postDto) {
@@ -71,15 +75,15 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
         deletePostComments(post);
-        commentQueryRepository.deleteCommentsByPostId(postId);
+        commentRepository.deleteCommentsByPostId(postId);
         post.getFavorites().clear();
-        favoriteQueryRepository.deleteFavoritesByPostId(postId);
+        favoriteRepository.deleteFavoritesByPostId(postId);
         postRepository.delete(post);
     }
 
     public Page<PostListDto> getPostAllByCreatedAt(Integer page,Integer size){
         PageRequest pageRequest=PageRequest.of(page, size, Sort.Direction.DESC,"createdAt");
-        Page<Post> posts = postRepository.findAllWithUserCountBy(pageRequest);
+        Page<Post> posts = postRepository.findPostsWithUsersAsPage(pageRequest);
         Page<PostListDto> toMap = posts.map(post -> PostListDto.builder()
                 .title(post.getTitle())
                 .categoryName(post.getCategoryName())

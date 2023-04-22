@@ -3,8 +3,8 @@ package com.blog.summer.controller;
 
 import com.blog.summer.domain.Post;
 import com.blog.summer.dto.post.*;
-import com.blog.summer.repository.PostQueryRepository;
-import com.blog.summer.repository.PostRepository;
+import com.blog.summer.repository.post.PostQueryRepository;
+import com.blog.summer.repository.post.PostRepository;
 import com.blog.summer.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

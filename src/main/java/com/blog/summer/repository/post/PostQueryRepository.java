@@ -1,4 +1,4 @@
-package com.blog.summer.repository;
+package com.blog.summer.repository.post;
 
 
 import com.blog.summer.domain.Post;
@@ -12,11 +12,10 @@ import java.util.List;
 
 import static com.blog.summer.domain.QPost.post;
 
-@Repository
+
 @RequiredArgsConstructor
 public class PostQueryRepository {
 
-    private final EntityManager em;
     private final JPAQueryFactory queryFactory;
 
     @Transactional

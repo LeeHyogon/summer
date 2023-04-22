@@ -1,4 +1,4 @@
-package com.blog.summer.repository;
+package com.blog.summer.repository.comment;
 
 import com.blog.summer.domain.Comment;
 import com.blog.summer.domain.Post;
@@ -11,7 +11,7 @@ import java.util.List;
 
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comment,Long> {
+public interface CommentRepository extends JpaRepository<Comment,Long>,CommentRepositoryCustom {
 
     List<Comment> findByCommentPost(Post post);
 

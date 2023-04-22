@@ -8,12 +8,10 @@ import com.blog.summer.dto.comment.CommentDto;
 import com.blog.summer.dto.comment.CommentStatus;
 import com.blog.summer.dto.comment.ResponseCommentRegister;
 import com.blog.summer.exception.NotFoundException;
-import com.blog.summer.repository.CommentRepository;
-import com.blog.summer.repository.PostRepository;
+import com.blog.summer.repository.comment.CommentRepository;
+import com.blog.summer.repository.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

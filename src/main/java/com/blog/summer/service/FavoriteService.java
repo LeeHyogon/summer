@@ -6,14 +6,11 @@ import com.blog.summer.domain.UserEntity;
 import com.blog.summer.dto.favorite.FavoriteDto;
 import com.blog.summer.dto.favorite.ResponseFavoriteClick;
 import com.blog.summer.exception.NotFoundException;
-import com.blog.summer.repository.FavoriteRepository;
-import com.blog.summer.repository.PostRepository;
+import com.blog.summer.repository.favorite.FavoriteRepository;
+import com.blog.summer.repository.post.PostRepository;
 import com.blog.summer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

@@ -5,7 +5,7 @@ import com.blog.summer.domain.Comment;
 import com.blog.summer.domain.UserEntity;
 import com.blog.summer.dto.comment.ResponseUserComment;
 import com.blog.summer.exception.NotFoundException;
-import com.blog.summer.repository.CommentRepository;
+import com.blog.summer.repository.comment.CommentRepository;
 import com.blog.summer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

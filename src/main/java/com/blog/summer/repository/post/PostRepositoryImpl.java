@@ -1,9 +1,6 @@
-package com.blog.summer.repository;
+package com.blog.summer.repository.post;
 
 import com.blog.summer.domain.Post;
-import com.blog.summer.domain.QComment;
-import com.blog.summer.domain.QPost;
-import com.blog.summer.domain.QUserEntity;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,7 +24,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
         return Optional.ofNullable(
                 queryFactory
                         .selectFrom(post)
-                        .join(post.postUser, userEntity)
+                        .join(post.postUser, userEntity).fetchJoin()
                         .where(post.id.eq(id))
                         .fetchOne()
         );
@@ -38,8 +35,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
         return Optional.ofNullable(
                 queryFactory
                         .selectFrom(post)
-                        .join(post.postUser,userEntity)
-                        .join(post.comments, comment)
+                        .join(post.postUser,userEntity).fetchJoin()
+                        .join(post.comments, comment).fetchJoin()
                         .where(post.id.eq(id))
                         .fetchOne()
         );
@@ -49,7 +46,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     public Page<Post> findPostsWithUsersAsPage(Pageable pageable) {
         List<Post> posts = queryFactory
                 .selectFrom(post)
-                .join(post.postUser, userEntity)
+                .join(post.postUser, userEntity).fetchJoin()
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

@@ -6,9 +6,7 @@ import lombok.Getter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -36,6 +34,11 @@ public class Post extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "favoritePost")
     private List<Favorite> favorites = new ArrayList<>();
+
+    @OneToMany(mappedBy = "tagPost")
+    private List<PostTag> postTags = new ArrayList<>();
+
+
 
     public Post() {}
 

@@ -1,10 +1,7 @@
 package com.blog.summer.service;
 
 
-import com.blog.summer.domain.Comment;
-import com.blog.summer.domain.Favorite;
-import com.blog.summer.domain.Post;
-import com.blog.summer.domain.UserEntity;
+import com.blog.summer.domain.*;
 import com.blog.summer.dto.comment.CommentStatus;
 import com.blog.summer.dto.post.PostDto;
 import com.blog.summer.dto.post.PostListDto;
@@ -28,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -39,20 +37,43 @@ public class PostService {
     private final PostQueryRepository postQueryRepository;
     private final CommentRepository commentRepository;
     private final FavoriteRepository favoriteRepository;
+    private final PostTagRepository postTagRepository;
+    private final TagRepository tagRepository;
     private final RedisTemplate redisTemplate;
 
     public ResponsePostRegister createPost(PostDto postDto) {
+        List<String> tagNames = postDto.getTagNames();
         Post post = Post.builder()
                 .title(postDto.getTitle())
                 .content(postDto.getContent())
                 .categoryName(postDto.getCategoryName())
                 .build();
 
-
         UserEntity user = userRepository.findByUserId(postDto.getUserId())
                 .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다"));
         post.setPostUser(user);
         postRepository.save(post);
+        for (String tagName : tagNames) {
+            tagRepository.findByName(tagName).ifPresentOrElse(
+                    (tag)->{
+                        PostTag postTag = PostTag.createPostTag(post,tag);
+                        postTagRepository.save(postTag);
+
+                    },
+                    ()->{
+                        Tag tag = Tag.builder()
+                                .name(tagName)
+                                .build();
+                        tagRepository.save(tag);
+                        PostTag postTag = PostTag.createPostTag(post,tag);
+                        postTagRepository.save(postTag);
+                    }
+            );
+        }
+
+
+
+
         Long postId=post.getId();
         String name=user.getName();
 

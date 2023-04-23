@@ -32,6 +32,7 @@ public class PostController {
                 .content(requestPostRegister.getContent())
                 .userId(requestPostRegister.getUserId())
                 .categoryName(requestPostRegister.getCategoryName())
+                .tagNames(requestPostRegister.getTagNames())
                 .build();
         ResponsePostRegister responsePostRegister = postService.createPost(postDto);
 
@@ -55,10 +56,9 @@ public class PostController {
     @GetMapping("/api/postAll")
     public List<PostAllDto> getPostLazyAll(){
         List<Post> posts = postRepository.findAll();
-        List<PostAllDto> result= posts.stream()
-                .map(p->new PostAllDto(p))
+        return posts.stream()
+                .map(PostAllDto::new)
                 .collect(Collectors.toList());
-        return result;
     }
 
     @GetMapping("/postList")

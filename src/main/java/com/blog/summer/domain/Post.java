@@ -40,6 +40,8 @@ public class Post extends BaseTimeEntity {
 
 
 
+
+
     public Post() {}
 
 
@@ -69,6 +71,12 @@ public class Post extends BaseTimeEntity {
     }
     public void removeFavorite(Favorite favorite) {
         favorites.remove(favorite);
+    }
+
+
+    public void addPostTag(PostTag postTag) {
+        postTags.add(postTag);
+
     }
 }
 

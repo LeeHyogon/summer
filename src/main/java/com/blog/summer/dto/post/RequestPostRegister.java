@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Data
 public class RequestPostRegister {
@@ -20,4 +21,7 @@ public class RequestPostRegister {
     private String userId;
 
     private String categoryName;
+
+    private List<String> tagNames;
+
 }

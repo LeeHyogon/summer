@@ -3,16 +3,14 @@ package com.blog.summer.service;
 
 import com.blog.summer.domain.*;
 import com.blog.summer.dto.comment.CommentStatus;
-import com.blog.summer.dto.post.PostDto;
-import com.blog.summer.dto.post.PostListDto;
-import com.blog.summer.dto.post.ResponsePostOne;
-import com.blog.summer.dto.post.ResponsePostRegister;
+import com.blog.summer.dto.post.*;
 import com.blog.summer.exception.NotFoundException;
 import com.blog.summer.repository.*;
 import com.blog.summer.repository.comment.CommentRepository;
 import com.blog.summer.repository.favorite.FavoriteRepository;
 import com.blog.summer.repository.post.PostQueryRepository;
 import com.blog.summer.repository.post.PostRepository;
+import com.blog.summer.repository.postTag.PostTagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -58,7 +56,6 @@ public class PostService {
                     (tag)->{
                         PostTag postTag = PostTag.createPostTag(post,tag);
                         postTagRepository.save(postTag);
-
                     },
                     ()->{
                         Tag tag = Tag.builder()
@@ -70,15 +67,50 @@ public class PostService {
                     }
             );
         }
-
-
-
-
         Long postId=post.getId();
         String name=user.getName();
 
         return getResponsePostRegister(postDto, postId, name);
     }
+
+    //태그 지우는 것 구현 남음.
+    //post 엔티티 변경감지 로직 남음.
+    public void updatePost(PostUpdateDto postUpdateDto){
+        Long postId = postUpdateDto.getPostId();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
+        String title = postUpdateDto.getTitle();
+        String content = postUpdateDto.getContent();
+        List<String> tagNames = postUpdateDto.getTagNames();
+        for (String tagName : tagNames) {
+            tagRepository.findByName(tagName).ifPresentOrElse(
+                    (tag)->{
+                        //태그가 존재할 경우에, post 수정 시 새로 추가된 태그가 아닌 경우에
+                        //postTag 생성해서 연관관계 설정.
+                        postTagRepository.findByPostAndTag(postId,tag.getId()).orElseGet(
+                                ()->{
+                                    PostTag postTag = PostTag.createPostTag(post,tag);
+                                    postTagRepository.save(postTag);
+                                    return postTag;
+                                }
+                        );
+                        //PostTag postTag = PostTag.createPostTag(post,tag);
+                        //postTagRepository.save(postTag);
+                    },
+                    //태그가 존재하지 않으면 create와 동일한 로직으로 진행
+                    ()->{
+                        Tag tag = Tag.builder()
+                                .name(tagName)
+                                .build();
+                        tagRepository.save(tag);
+                        PostTag postTag = PostTag.createPostTag(post,tag);
+                        postTagRepository.save(postTag);
+                    }
+            );
+        }
+
+    }
+
     public ResponsePostOne getPostOne(Long postId){
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));

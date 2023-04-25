@@ -14,4 +14,6 @@ public interface PostRepositoryCustom {
     Optional<Post> findByIdWithUserComment(Long id);
 
     Page<Post> findPostsWithUsersAsPage(Pageable pageable);
+
+    Optional<Post> findByIdWithTags(Long id);
 }

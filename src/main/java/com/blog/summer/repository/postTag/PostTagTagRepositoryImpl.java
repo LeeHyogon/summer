@@ -18,7 +18,7 @@ public class PostTagTagRepositoryImpl implements PostTagRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
     @Override
-    public Optional<PostTag> findByPostAndTag(Long postId, Long tagId) {
+    public Optional<PostTag> findByPostIdAndTagId(Long postId, Long tagId) {
         return Optional.ofNullable(
                 queryFactory
                         .select(postTag)

@@ -6,5 +6,7 @@ import java.util.Optional;
 
 public interface PostTagRepositoryCustom {
 
-    Optional<PostTag> findByPostAndTag(Long postId,Long tagId);
+    Optional<PostTag> findByPostIdAndTagId(Long postId, Long tagId);
+
+
 }

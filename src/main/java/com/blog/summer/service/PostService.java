@@ -26,6 +26,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.stream.Collectors.*;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -76,28 +78,55 @@ public class PostService {
         postTagRepository.save(postTag);
         return postTag;
     }
-
-    //태그 지우는 것 구현 남음.
-    //post 엔티티 변경 감지 로직 남음.
-    //만약 기존에 존재하던 태그를 지운다면?
-    //벨로그는 기존에 존재하던 태그 청소는 나중에 하는 것으로 확인
-    //글 태그 삭제 시 바로 반영 안됨.
-    //글 태그 추가 시 바로 반영 안됨.
-    //글 생성 시 태그도 바로 추가 안됨...이미 존재하던 태그가 아니면 생성 처리를 좀 늦게하는 로직 인건지 확인중
+    /*
+        태그 지우는 것 구현 남음.
+        post 엔티티 변경 감지 로직 남음.
+        만약 기존에 존재하던 태그를 지운다면?
+        벨로그는 기존에 존재하던 태그 청소는 나중에 하는 것으로 확인
+        글 태그 삭제 시 바로 반영 안됨.
+        글 태그 추가 시 바로 반영 안됨.
+        글 생성 시 태그도 바로 추가 안됨...이미 존재하던 태그가 아니면 생성 처리를 좀 늦게하는 로직 인건지 확인중.
+        게시글에 존재하던 태그를 삭제하는 로직은 어떻게 구현할까?
+        -> 게시글의 postTags 조회 쿼리1회할때 fetchjoin으로 다 name 들고와서..?
+        -> tagNames에 그 태그가 존재하지 않으면 삭제하는 방식으로...매우 끔찍한 방식인데..? why? List로 Tagnames 다비교
+        -> 그냥 기존 Post가 가지고있던 Tag 다날리고 새로 처음 부터 저장하는게 ..? 그것도 끔찍한 방식.
+        그래도 일단 List로 Tagnames 다비교하고 삭제된 OldTag들 처리하는 로직으로 일단 구현
+    */
     public void updatePost(PostUpdateDto postUpdateDto){
         Long postId = postUpdateDto.getPostId();
-        Post post = postRepository.findById(postId)
+
+        Post post = postRepository.findByIdWithTags(postId)
                 .orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
         String title = postUpdateDto.getTitle();
         String content = postUpdateDto.getContent();
+        List<Tag> tags = post.getPostTags().stream().map((pt) -> pt.getTag())
+                .collect(toList());
         List<String> tagNames = postUpdateDto.getTagNames();
+        List<String> oldNames = post.getPostTags().stream().map((pt) -> pt.getTag().getName())
+                .collect(toList());
+
+        //일단 끔찍한 로직 완성.. 테스트는 내일 예정
+        for (String oldName : oldNames) {
+            if (!tagNames.contains(oldName)) {
+                for (Tag tag : tags) {
+                    if (tag.getName().equals(oldName)) {
+                        Long id = tag.getId();
+                        PostTag postTag = postTagRepository.findByPostIdAndTagId(postId, id)
+                                .orElseThrow(() -> new NotFoundException("포스트 태그 못찾음."));
+                        tag.removePostTag(postTag);
+                        post.removePostTag(postTag);
+                        postTagRepository.delete(postTag);
+                    }
+                }
+            }
+        }
         for (String tagName : tagNames) {
             tagRepository.findByName(tagName).ifPresentOrElse(
                     (tag)->{
                         //태그가 존재할 경우에, post 수정 시 이미 존재 하던 태그를
                         //post에 입력한 경우
                         //postTag 생성해서 연관관계 설정.
-                        postTagRepository.findByPostAndTag(postId,tag.getId()).orElseGet(
+                        postTagRepository.findByPostIdAndTagId(postId,tag.getId()).orElseGet(
                                 ()-> {
                                     return createPostTag(post, tag);
                                 }

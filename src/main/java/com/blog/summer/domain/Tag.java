@@ -32,4 +32,9 @@ public class Tag {
     public void addPostTag(PostTag postTag) {
         postTags.add(postTag);
     }
+
+    public void removePostTag(PostTag postTag) {
+        postTags.remove(postTag);
+        //만약 postTag가 null이라면?
+    }
 }

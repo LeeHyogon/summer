@@ -54,16 +54,14 @@ public class PostService {
         for (String tagName : tagNames) {
             tagRepository.findByName(tagName).ifPresentOrElse(
                     (tag)->{
-                        PostTag postTag = PostTag.createPostTag(post,tag);
-                        postTagRepository.save(postTag);
+                        createPostTag(post, tag);
                     },
                     ()->{
                         Tag tag = Tag.builder()
                                 .name(tagName)
                                 .build();
                         tagRepository.save(tag);
-                        PostTag postTag = PostTag.createPostTag(post,tag);
-                        postTagRepository.save(postTag);
+                        createPostTag(post, tag);
                     }
             );
         }
@@ -73,8 +71,19 @@ public class PostService {
         return getResponsePostRegister(postDto, postId, name);
     }
 
+    private PostTag createPostTag(Post post, Tag tag) {
+        PostTag postTag = PostTag.createPostTag(post, tag);
+        postTagRepository.save(postTag);
+        return postTag;
+    }
+
     //태그 지우는 것 구현 남음.
-    //post 엔티티 변경감지 로직 남음.
+    //post 엔티티 변경 감지 로직 남음.
+    //만약 기존에 존재하던 태그를 지운다면?
+    //벨로그는 기존에 존재하던 태그 청소는 나중에 하는 것으로 확인
+    //글 태그 삭제 시 바로 반영 안됨.
+    //글 태그 추가 시 바로 반영 안됨.
+    //글 생성 시 태그도 바로 추가 안됨...이미 존재하던 태그가 아니면 생성 처리를 좀 늦게하는 로직 인건지 확인중
     public void updatePost(PostUpdateDto postUpdateDto){
         Long postId = postUpdateDto.getPostId();
         Post post = postRepository.findById(postId)
@@ -85,30 +94,28 @@ public class PostService {
         for (String tagName : tagNames) {
             tagRepository.findByName(tagName).ifPresentOrElse(
                     (tag)->{
-                        //태그가 존재할 경우에, post 수정 시 새로 추가된 태그가 아닌 경우에
+                        //태그가 존재할 경우에, post 수정 시 이미 존재 하던 태그를
+                        //post에 입력한 경우
                         //postTag 생성해서 연관관계 설정.
                         postTagRepository.findByPostAndTag(postId,tag.getId()).orElseGet(
-                                ()->{
-                                    PostTag postTag = PostTag.createPostTag(post,tag);
-                                    postTagRepository.save(postTag);
-                                    return postTag;
+                                ()-> {
+                                    return createPostTag(post, tag);
                                 }
                         );
                         //PostTag postTag = PostTag.createPostTag(post,tag);
                         //postTagRepository.save(postTag);
                     },
-                    //태그가 존재하지 않으면 create와 동일한 로직으로 진행
+                    //태그가 존재하지 않으면 create와 동일한 로직으로
+                    //태그를 생성 후 , post에 저장
                     ()->{
                         Tag tag = Tag.builder()
                                 .name(tagName)
                                 .build();
                         tagRepository.save(tag);
-                        PostTag postTag = PostTag.createPostTag(post,tag);
-                        postTagRepository.save(postTag);
+                        createPostTag(post, tag);
                     }
             );
         }
-
     }
 
     public ResponsePostOne getPostOne(Long postId){

@@ -22,8 +22,7 @@ public class Tag {
     @OneToMany(mappedBy = "tag")
     private List<PostTag> postTags = new ArrayList<>();
 
-    public Tag() {
-    }
+    public Tag() {}
 
     @Builder
     public Tag(String name) {

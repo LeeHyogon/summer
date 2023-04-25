@@ -107,16 +107,14 @@ public class PostService {
 
         //일단 끔찍한 로직 완성.. 테스트는 내일 예정
         for (String oldName : oldNames) {
-            if (!tagNames.contains(oldName)) {
-                for (Tag tag : tags) {
-                    if (tag.getName().equals(oldName)) {
-                        Long id = tag.getId();
-                        PostTag postTag = postTagRepository.findByPostIdAndTagId(postId, id)
-                                .orElseThrow(() -> new NotFoundException("포스트 태그 못찾음."));
-                        tag.removePostTag(postTag);
-                        post.removePostTag(postTag);
-                        postTagRepository.delete(postTag);
-                    }
+            for(Tag tag : tags){
+                if (tag.getName().equals(oldName)) {
+                    Long id = tag.getId();
+                    PostTag postTag = postTagRepository.findByPostIdAndTagId(postId, id)
+                            .orElseThrow(() -> new NotFoundException("포스트 태그 못찾음."));
+                    tag.removePostTag(postTag);
+                    post.removePostTag(postTag);
+                    postTagRepository.delete(postTag);
                 }
             }
         }

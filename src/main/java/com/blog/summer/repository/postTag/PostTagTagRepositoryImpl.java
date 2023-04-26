@@ -7,6 +7,7 @@ import com.blog.summer.domain.QTag;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.blog.summer.domain.QPost.post;
@@ -31,4 +32,14 @@ public class PostTagTagRepositoryImpl implements PostTagRepositoryCustom {
                         ).fetchOne()
         );
     }
+
+    @Override
+    public List<PostTag> findByPostIdWithTag(Long postId) {
+        return queryFactory
+                .selectFrom(postTag)
+                .join(postTag.tag,tag).fetchJoin()
+                .where(postTag.tagPost.id.eq(postId))
+                .fetch();
+    }
+
 }

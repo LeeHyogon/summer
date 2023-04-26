@@ -60,17 +60,6 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
         return new PageImpl<>(posts, pageable, total);
     }
 
-    @Override
-    public Optional<Post> findByIdWithTags(Long id) {
-            return Optional.ofNullable(
-                    queryFactory
-                            .select(post)
-                            .join(post.postTags, postTag).fetchJoin()
-                            .join(postTag.tag, tag).fetchJoin()
-                            .where(post.id.eq(id))
-                            .fetchOne()
-            );
 
-    }
 
 }

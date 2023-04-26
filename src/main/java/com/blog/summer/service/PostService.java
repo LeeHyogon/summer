@@ -2,6 +2,7 @@ package com.blog.summer.service;
 
 
 import com.blog.summer.domain.*;
+import com.blog.summer.dto.PostTagStatus;
 import com.blog.summer.dto.comment.CommentStatus;
 import com.blog.summer.dto.post.*;
 import com.blog.summer.exception.NotFoundException;
@@ -56,14 +57,14 @@ public class PostService {
         for (String tagName : tagNames) {
             tagRepository.findByName(tagName).ifPresentOrElse(
                     (tag)->{
-                        createPostTag(post, tag);
+                        createPostTag(post, tag,tagName,PostTagStatus.REGISTERED);
                     },
                     ()->{
                         Tag tag = Tag.builder()
                                 .name(tagName)
                                 .build();
                         tagRepository.save(tag);
-                        createPostTag(post, tag);
+                        createPostTag(post,tag,tagName,PostTagStatus.REGISTERED);
                     }
             );
         }
@@ -73,8 +74,8 @@ public class PostService {
         return getResponsePostRegister(postDto, postId, name);
     }
 
-    private PostTag createPostTag(Post post, Tag tag) {
-        PostTag postTag = PostTag.createPostTag(post, tag);
+    private PostTag createPostTag(Post post, Tag tag,String tagName,PostTagStatus status) {
+        PostTag postTag = PostTag.createPostTag(post, tag,tagName,status);
         postTagRepository.save(postTag);
         return postTag;
     }
@@ -91,30 +92,46 @@ public class PostService {
         -> tagNames에 그 태그가 존재하지 않으면 삭제하는 방식으로...매우 끔찍한 방식인데..? why? List로 Tagnames 다비교
         -> 그냥 기존 Post가 가지고있던 Tag 다날리고 새로 처음 부터 저장하는게 ..? 그것도 끔찍한 방식.
         그래도 일단 List로 Tagnames 다비교하고 삭제된 OldTag들 처리하는 로직으로 일단 구현
+
+        04.26
+        어제 등록했던 벨로그의 테스트 글들의 태그들이 모두 정상 등록 되었음.
+        일정 시간마다 태그를 갱신하는 것으로 보임.
+        태그에 Status를 추가해야 할 듯.
+
+        Post의 PostTag 삭제. 가지고 있을 필요 없어보임. why? PostId만 있으면 PostTag의  TagNames가져올 수 있음.
+
     */
     public void updatePost(PostUpdateDto postUpdateDto){
         Long postId = postUpdateDto.getPostId();
 
-        Post post = postRepository.findByIdWithTags(postId)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
         String title = postUpdateDto.getTitle();
         String content = postUpdateDto.getContent();
-        List<Tag> tags = post.getPostTags().stream().map((pt) -> pt.getTag())
-                .collect(toList());
+
         List<String> tagNames = postUpdateDto.getTagNames();
-        List<String> oldNames = post.getPostTags().stream().map((pt) -> pt.getTag().getName())
+        //이전처럼 연관관계가 복잡해지진 않지만 query를 이렇게 하나 더날려야 한다.
+        List<PostTag> postTags = postTagRepository.findByPostIdWithTag(postId);
+        List<String> oldNames = postTags.stream().map((pt) -> pt.getTag().getName())
+                .collect(toList());
+        List<Tag> tags = postTags.stream().map((pt) -> pt.getTag())
                 .collect(toList());
 
         //일단 끔찍한 로직 완성.. 테스트는 내일 예정
+        //매번 삭제 업데이트 하지 않고, 벌크 연산을 이용할 예정.
         for (String oldName : oldNames) {
             for(Tag tag : tags){
                 if (tag.getName().equals(oldName)) {
                     Long id = tag.getId();
                     PostTag postTag = postTagRepository.findByPostIdAndTagId(postId, id)
                             .orElseThrow(() -> new NotFoundException("포스트 태그 못찾음."));
+                    /*
                     tag.removePostTag(postTag);
                     post.removePostTag(postTag);
                     postTagRepository.delete(postTag);
+                     */
+                    //나중에 스케줄러로 처리해야되나?
+                    postTag.setStatus(PostTagStatus.DELETED);
                 }
             }
         }
@@ -126,7 +143,7 @@ public class PostService {
                         //postTag 생성해서 연관관계 설정.
                         postTagRepository.findByPostIdAndTagId(postId,tag.getId()).orElseGet(
                                 ()-> {
-                                    return createPostTag(post, tag);
+                                    return createPostTag(post, tag,tagName,PostTagStatus.REGISTERED);
                                 }
                         );
                         //PostTag postTag = PostTag.createPostTag(post,tag);
@@ -135,11 +152,14 @@ public class PostService {
                     //태그가 존재하지 않으면 create와 동일한 로직으로
                     //태그를 생성 후 , post에 저장
                     ()->{
+                        /*
                         Tag tag = Tag.builder()
                                 .name(tagName)
                                 .build();
                         tagRepository.save(tag);
                         createPostTag(post, tag);
+                         */
+
                     }
             );
         }

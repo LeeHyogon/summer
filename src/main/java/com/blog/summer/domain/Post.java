@@ -35,9 +35,6 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "favoritePost")
     private List<Favorite> favorites = new ArrayList<>();
 
-    @OneToMany(mappedBy = "tagPost")
-    private List<PostTag> postTags = new ArrayList<>();
-
 
 
 
@@ -74,13 +71,6 @@ public class Post extends BaseTimeEntity {
     }
 
 
-    public void addPostTag(PostTag postTag) {
-        postTags.add(postTag);
 
-    }
-
-    public void removePostTag(PostTag postTag) {
-        postTags.remove(postTag);
-    }
 }
 

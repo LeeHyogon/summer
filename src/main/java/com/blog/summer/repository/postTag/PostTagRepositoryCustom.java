@@ -2,6 +2,7 @@ package com.blog.summer.repository.postTag;
 
 import com.blog.summer.domain.PostTag;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PostTagRepositoryCustom {
@@ -9,4 +10,5 @@ public interface PostTagRepositoryCustom {
     Optional<PostTag> findByPostIdAndTagId(Long postId, Long tagId);
 
 
+    List<PostTag> findByPostIdWithTag(Long postId);
 }

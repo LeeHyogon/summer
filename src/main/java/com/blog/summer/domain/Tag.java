@@ -19,8 +19,6 @@ public class Tag {
 
     private String name;
 
-    @OneToMany(mappedBy = "tag")
-    private List<PostTag> postTags = new ArrayList<>();
 
     public Tag() {}
 
@@ -29,12 +27,4 @@ public class Tag {
         this.name = name;
     }
 
-    public void addPostTag(PostTag postTag) {
-        postTags.add(postTag);
-    }
-
-    public void removePostTag(PostTag postTag) {
-        postTags.remove(postTag);
-        //만약 postTag가 null이라면?
-    }
 }

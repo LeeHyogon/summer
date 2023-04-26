@@ -1,6 +1,7 @@
 package com.blog.summer.domain;
 
 
+import com.blog.summer.dto.PostTagStatus;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,6 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
+@Builder
 public class PostTag {
     @Id
     @GeneratedValue
@@ -23,26 +25,45 @@ public class PostTag {
     @JoinColumn(name = "tag_id")
     private Tag tag;
 
+    private String tagName;
+
+    @Enumerated(EnumType.STRING)
+    private PostTagStatus status;
     public PostTag() {
     }
 
-    @Builder
     public PostTag(Post tagPost,Tag tag) {
         this.tagPost=tagPost;
         this.tag = tag;
     }
 
-    public static PostTag createPostTag(Post post ,Tag tag) {
+    public PostTag(String tagName, PostTagStatus status) {
+        this.tagName = tagName;
+        this.status = status;
+    }
+
+    public PostTag(Post tagPost, Tag tag, String tagName, PostTagStatus status) {
+        this.tagPost = tagPost;
+        this.tag = tag;
+        this.tagName = tagName;
+        this.status = status;
+    }
+
+    public static PostTag createPostTag(Post post , Tag tag, String tagName, PostTagStatus status) {
         PostTag postTag = PostTag.builder()
                 .tagPost(post)
                 .tag(tag)
+                .tagName(tagName)
+                .status(status)
                 .build();
-        post.addPostTag(postTag);
-        tag.addPostTag(postTag);
         return postTag;
     }
 
     public void setPost(Post post) {
         tagPost=post;
+    }
+
+    public void setStatus(PostTagStatus postTagStatus) {
+        status=postTagStatus;
     }
 }

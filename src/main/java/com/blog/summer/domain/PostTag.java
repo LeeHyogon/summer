@@ -56,6 +56,18 @@ public class PostTag {
                 .tagName(tagName)
                 .status(status)
                 .build();
+        post.addPostTag(postTag);
+        tag.addPostTag(postTag);
+        return postTag;
+    }
+
+    public static PostTag updatePostTag(Post post, String tagName, PostTagStatus status) {
+        PostTag postTag=PostTag.builder()
+                .tagName(tagName)
+                .tagPost(post)
+                .status(status)
+                .build();
+        post.addPostTag(postTag);
         return postTag;
     }
 

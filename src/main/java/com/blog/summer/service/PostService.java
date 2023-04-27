@@ -23,6 +23,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -54,30 +55,35 @@ public class PostService {
                 .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다"));
         post.setPostUser(user);
         postRepository.save(post);
+        List<PostTag> postTags=new ArrayList<>();
         for (String tagName : tagNames) {
             tagRepository.findByName(tagName).ifPresentOrElse(
                     (tag)->{
-                        createPostTag(post, tag,tagName,PostTagStatus.REGISTERED);
+                        postTags.add(createPostTag(post, tag, tagName, PostTagStatus.REGISTERED));
                     },
                     ()->{
                         Tag tag = Tag.builder()
                                 .name(tagName)
                                 .build();
                         tagRepository.save(tag);
-                        createPostTag(post,tag,tagName,PostTagStatus.REGISTERED);
+                        postTags.add(updatePostTag(post, tagName, PostTagStatus.UPDATED));
                     }
             );
         }
         Long postId=post.getId();
         String name=user.getName();
+        
+        postTagRepository.saveAll(postTags);
 
         return getResponsePostRegister(postDto, postId, name);
     }
 
+    private PostTag updatePostTag(Post post, String tagName, PostTagStatus status) {
+        return PostTag.updatePostTag(post,tagName,status);
+    }
+
     private PostTag createPostTag(Post post, Tag tag,String tagName,PostTagStatus status) {
-        PostTag postTag = PostTag.createPostTag(post, tag,tagName,status);
-        postTagRepository.save(postTag);
-        return postTag;
+        return PostTag.createPostTag(post, tag,tagName,status);
     }
     /*
         태그 지우는 것 구현 남음.
@@ -99,6 +105,9 @@ public class PostService {
         태그에 Status를 추가해야 할 듯.
 
         Post의 PostTag 삭제. 가지고 있을 필요 없어보임. why? PostId만 있으면 PostTag의  TagNames가져올 수 있음.
+        Post의 PostTag 삭제 시 쿼리 1개를 더 보내야함.
+
+        Post와 Tag 연관관계 메서드 다시 추가하는게 좋을거같기도
 
     */
     public void updatePost(PostUpdateDto postUpdateDto){
@@ -117,7 +126,6 @@ public class PostService {
         List<Tag> tags = postTags.stream().map((pt) -> pt.getTag())
                 .collect(toList());
 
-        //일단 끔찍한 로직 완성.. 테스트는 내일 예정
         //매번 삭제 업데이트 하지 않고, 벌크 연산을 이용할 예정.
         for (String oldName : oldNames) {
             for(Tag tag : tags){

@@ -75,5 +75,9 @@ public class Post extends BaseTimeEntity {
     public void addPostTag(PostTag postTag) {
         this.postTags.add(postTag);
     }
+
+    public void removePostTag(PostTag postTag) {
+        postTags.remove(postTag);
+    }
 }
 

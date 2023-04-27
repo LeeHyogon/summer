@@ -15,4 +15,5 @@ public interface PostRepositoryCustom {
 
     Page<Post> findPostsWithUsersAsPage(Pageable pageable);
 
+    Optional<Post> findByIdWithPostTag(Long id);
 }

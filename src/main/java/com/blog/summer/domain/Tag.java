@@ -33,4 +33,8 @@ public class Tag {
     public void addPostTag(PostTag postTag) {
         this.postTags.add(postTag);
     }
+
+    public void removePostTag(PostTag postTag) {
+        postTags.remove(postTag);
+    }
 }

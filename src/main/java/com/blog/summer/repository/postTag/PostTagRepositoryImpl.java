@@ -1,9 +1,6 @@
 package com.blog.summer.repository.postTag;
 
 import com.blog.summer.domain.PostTag;
-import com.blog.summer.domain.QPost;
-import com.blog.summer.domain.QPostTag;
-import com.blog.summer.domain.QTag;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -11,11 +8,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.blog.summer.domain.QPost.post;
-import static com.blog.summer.domain.QPostTag.*;
+import static com.blog.summer.domain.QPostTag.postTag;
 import static com.blog.summer.domain.QTag.tag;
 
+
 @RequiredArgsConstructor
-public class PostTagTagRepositoryImpl implements PostTagRepositoryCustom {
+public class PostTagRepositoryImpl implements PostTagRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
     @Override
@@ -34,7 +32,7 @@ public class PostTagTagRepositoryImpl implements PostTagRepositoryCustom {
     }
 
     @Override
-    public List<PostTag> findByPostIdWithTag(Long postId) {
+    public List<PostTag> findByPostIdWithTagFetchJoin(Long postId) {
         return queryFactory
                 .selectFrom(postTag)
                 .join(postTag.tag,tag).fetchJoin()

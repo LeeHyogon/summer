@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -21,13 +22,19 @@ public class ResponsePostRegister extends BaseTimeEntity {
 
     private String content;
 
-    private String name;
+    private String userId;
 
-    public ResponsePostRegister(Long postId, String categoryName, String title, String content, String name) {
+    private List<String> tagNames;
+
+    public ResponsePostRegister(Long postId, String categoryName, String title,
+                                String content, String userId, List<String> tagNames) {
         this.postId = postId;
         this.categoryName = categoryName;
         this.title = title;
         this.content = content;
-        this.name = name;
+        this.userId = userId;
+        this.tagNames = tagNames;
     }
+
+
 }

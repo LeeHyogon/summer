@@ -70,8 +70,16 @@ public class PostService {
         String name=user.getName();
 
         postTagRepository.saveAll(postTags);
+        List<String> tags = postTags.stream().map((pt) -> pt.getTagName()).collect(toList());
 
-        return getResponsePostRegister(postDto, postId, name);
+        return ResponsePostRegister.builder()
+                .postId(postId)
+                .userId(post.getPostUser().getUserId())
+                .title(postDto.getTitle())
+                .content(postDto.getContent())
+                .categoryName(postDto.getCategoryName())
+                .tagNames(tags)
+                .build();
     }
 
     private PostTag updatePostTag(Post post, String tagName, PostTagStatus status) {
@@ -86,7 +94,7 @@ public class PostService {
         DELETED: 연관관계를 모두 지운, 삭제할 예정. (벌크 연산으로 한번에 삭제 예정)
         REGISTERED: 이미 Tag 객체가 존재하는 경우.
     */
-    public void updatePost(PostUpdateDto postUpdateDto){
+    public ResponsePostRegister updatePost(PostUpdateDto postUpdateDto){
         Long postId = postUpdateDto.getPostId();
 
         Post post = postRepository.findByIdWithPostTag(postId)
@@ -94,31 +102,40 @@ public class PostService {
         String title = postUpdateDto.getTitle();
         String content = postUpdateDto.getContent();
 
-        List<String> tagNames = postUpdateDto.getTagNames();
-        List<PostTag> postTags = post.getPostTags();
-        for (PostTag postTag : postTags) {
+        post.updatePost(title,content);
+        Iterator<PostTag> iterator = post.getPostTags().iterator();
+        while(iterator.hasNext()){
+            PostTag postTag = iterator.next();
             if(postTag.getStatus()==PostTagStatus.DELETED)
                 continue;
             String oldName=postTag.getTagName();
-            for(String newName : tagNames){
-                //이름이 불일치 하다면 oldName 즉, 이전 태그는 삭제하고 수정 한것.
-                if (!oldName.equals(newName)) {
-                    if(postTag.getStatus()==PostTagStatus.REGISTERED){
-                        //이 부분은 fetch join으로 최적화 할 수 있을 것 같음.
-                        //추후 수정
-                        Tag tag = postTag.getTag();
-                        tag.removePostTag(postTag);
-                        post.removePostTag(postTag);
-                        postTag.setStatus(PostTagStatus.DELETED);
-                    }
-                    else if(postTag.getStatus()==PostTagStatus.UPDATED){
-                        //UPDATED는 아직 Tag생성되지 않았으므로, 연관관계도 없음.
-                        post.removePostTag(postTag);
-                        postTag.setStatus(PostTagStatus.DELETED);
-                    }
+            Boolean check=false;
+            //일치하는 이름이 없는지 체크
+            Iterator<String> iteratorNewNames =  postUpdateDto.getTagNames().iterator();
+            while(iteratorNewNames.hasNext()){
+                String newName = iteratorNewNames.next();
+                if (oldName.equals(newName)) {
+                    check=true;
+                    iteratorNewNames.remove();
+                }
+            }
+            if(check==false) {
+                if (postTag.getStatus() == PostTagStatus.REGISTERED) {
+                    //이 부분은 fetch join으로 최적화 할 수 있을 것 같음.
+                    //추후 수정
+                    Tag tag = postTag.getTag();
+                    tag.removePostTag(postTag);
+                    iterator.remove();
+                    postTag.setStatus(PostTagStatus.DELETED);
+                } else if (postTag.getStatus() == PostTagStatus.UPDATED) {
+                    //UPDATED는 아직 Tag생성되지 않았으므로, 연관관계도 없음.
+                    iterator.remove();
+                    postTag.setStatus(PostTagStatus.DELETED);
                 }
             }
         }
+        List<String> tagNames = postUpdateDto.getTagNames();
+        List<PostTag> postTags = post.getPostTags();
         for (String tagName : tagNames) {
             tagRepository.findByName(tagName).ifPresentOrElse(
                     (tag)->{
@@ -130,7 +147,17 @@ public class PostService {
             );
         }
         postTagRepository.saveAll(postTags);
+        List<String> tags = postTags.stream().map((pt) -> pt.getTagName()).collect(toList());
 
+
+        return ResponsePostRegister.builder()
+                .postId(postId)
+                .userId(postUpdateDto.getUserId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .categoryName(post.getCategoryName())
+                .tagNames(tags)
+                .build();
     }
 
     public ResponsePostOne getPostOne(Long postId){
@@ -187,16 +214,7 @@ public class PostService {
         }
     }
 
-    private static ResponsePostRegister getResponsePostRegister(PostDto postDto, Long postId, String name) {
-        ResponsePostRegister responsePostRegister= ResponsePostRegister.builder()
-                .postId(postId)
-                .name(name)
-                .title(postDto.getTitle())
-                .content(postDto.getContent())
-                .categoryName(postDto.getCategoryName())
-                .build();
-        return responsePostRegister;
-    }
+
 
     public void addViewCntToRedis(Long postId) {
         String key = getKey(postId);
@@ -223,7 +241,7 @@ public class PostService {
     }
 
     //3분마다 자동 실행해주는 스케쥴러
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0/3 * * * ?")
     public void deleteViewCntCacheFromRedis() {
         Set<String> redisKeys = redisTemplate.keys("post:*:views");
         Iterator<String> it = redisKeys.iterator();

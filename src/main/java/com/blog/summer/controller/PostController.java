@@ -38,6 +38,23 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responsePostRegister);
     }
+    @PatchMapping("/posts/{postId}")
+    public ResponseEntity<ResponsePostRegister> postUpdate(
+            @PathVariable Long postId,
+            @RequestBody RequestPostRegister requestPostRegister) {
+
+        PostUpdateDto postDto= PostUpdateDto.builder()
+                .postId(postId)
+                .title(requestPostRegister.getTitle())
+                .content(requestPostRegister.getContent())
+                .userId(requestPostRegister.getUserId())
+                .categoryName(requestPostRegister.getCategoryName())
+                .tagNames(requestPostRegister.getTagNames())
+                .build();
+        ResponsePostRegister responsePostRegister = postService.updatePost(postDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responsePostRegister);
+    }
 
     @DeleteMapping("/posts/{postId}")
     public ResponseEntity<?> deletePostAndMarkAsComment(@PathVariable Long postId){

@@ -2,20 +2,23 @@ package com.blog.summer.domain;
 
 
 import com.blog.summer.dto.PostTagStatus;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostTag {
     @Id
     @GeneratedValue
     @Column(name = "post_tag_id")
     private Long id;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
@@ -29,50 +32,32 @@ public class PostTag {
 
     @Enumerated(EnumType.STRING)
     private PostTagStatus status;
-    public PostTag() {
-    }
 
-    public PostTag(Post tagPost,Tag tag) {
-        this.tagPost=tagPost;
-        this.tag = tag;
-    }
 
-    public PostTag(String tagName, PostTagStatus status) {
-        this.tagName = tagName;
-        this.status = status;
-    }
-
-    public PostTag(Post tagPost, Tag tag, String tagName, PostTagStatus status) {
-        this.tagPost = tagPost;
-        this.tag = tag;
-        this.tagName = tagName;
-        this.status = status;
-    }
-
-    public static PostTag createPostTag(Post post , Tag tag, String tagName, PostTagStatus status) {
+    public static PostTag createPostTag(Post tagPost , Tag tag, String tagName, PostTagStatus status) {
         PostTag postTag = PostTag.builder()
-                .tagPost(post)
+                .tagPost(tagPost)
                 .tag(tag)
                 .tagName(tagName)
                 .status(status)
                 .build();
-        post.addPostTag(postTag);
+        tagPost.addPostTag(postTag);
         tag.addPostTag(postTag);
         return postTag;
     }
 
-    public static PostTag updatePostTag(Post post, String tagName, PostTagStatus status) {
+    public static PostTag updatePostTag(Post tagPost, String tagName, PostTagStatus status) {
         PostTag postTag=PostTag.builder()
                 .tagName(tagName)
-                .tagPost(post)
+                .tagPost(tagPost)
                 .status(status)
                 .build();
-        post.addPostTag(postTag);
+        tagPost.addPostTag(postTag);
         return postTag;
     }
 
-    public void setPost(Post post) {
-        tagPost=post;
+    public void setPost(Post tagPost) {
+        this.tagPost=tagPost;
     }
 
     public void setStatus(PostTagStatus postTagStatus) {

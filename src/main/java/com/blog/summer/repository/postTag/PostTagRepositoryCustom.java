@@ -10,5 +10,5 @@ public interface PostTagRepositoryCustom {
     Optional<PostTag> findByPostIdAndTagId(Long postId, Long tagId);
 
 
-    List<PostTag> findByPostIdWithTag(Long postId);
+    List<PostTag> findByPostIdWithTagFetchJoin(Long postId);
 }

@@ -11,4 +11,8 @@ public interface PostTagRepositoryCustom {
 
 
     List<PostTag> findByPostIdWithTagFetchJoin(Long postId);
+
+    List<String> findTagNamesByStatusUpdate();
+
+    List<PostTag> findAllStatusUpdate();
 }

@@ -1,9 +1,12 @@
 package com.blog.summer.repository.postTag;
 
 import com.blog.summer.domain.PostTag;
+import com.blog.summer.domain.QPostTag;
+import com.blog.summer.dto.PostTagStatus;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,5 +42,24 @@ public class PostTagRepositoryImpl implements PostTagRepositoryCustom {
                 .where(postTag.tagPost.id.eq(postId))
                 .fetch();
     }
+
+    @Override
+    public List<String> findTagNamesByStatusUpdate() {
+        return queryFactory
+                .selectDistinct(postTag.tagName)
+                .from(postTag)
+                .where(postTag.status.eq(PostTagStatus.UPDATED))
+                .fetch();
+    }
+
+    @Override
+    public List<PostTag> findAllStatusUpdate() {
+        return queryFactory
+                .select(postTag)
+                .from(postTag)
+                .where(postTag.status.eq(PostTagStatus.UPDATED))
+                .fetch();
+    }
+
 
 }

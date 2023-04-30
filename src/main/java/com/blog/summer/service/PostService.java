@@ -101,7 +101,6 @@ public class PostService {
                 .orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다."));
         String title = postUpdateDto.getTitle();
         String content = postUpdateDto.getContent();
-
         post.updatePost(title,content);
         Iterator<PostTag> iterator = post.getPostTags().iterator();
         while(iterator.hasNext()){
@@ -148,7 +147,6 @@ public class PostService {
         }
         postTagRepository.saveAll(postTags);
         List<String> tags = postTags.stream().map((pt) -> pt.getTagName()).collect(toList());
-
 
         return ResponsePostRegister.builder()
                 .postId(postId)
@@ -257,4 +255,7 @@ public class PostService {
             redisTemplate.delete("post:"+postId+"views");
         }
     }
+
+
+
 }

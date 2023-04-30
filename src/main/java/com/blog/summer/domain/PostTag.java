@@ -52,6 +52,7 @@ public class PostTag {
                 .tagPost(tagPost)
                 .status(status)
                 .build();
+
         tagPost.addPostTag(postTag);
         return postTag;
     }
@@ -62,5 +63,18 @@ public class PostTag {
 
     public void setStatus(PostTagStatus postTagStatus) {
         status=postTagStatus;
+    }
+
+    public void setTag(Tag tag) {
+        this.tag = tag;
+    }
+
+    @Override
+    public String toString() {
+        return "PostTag{" +
+                "id=" + id +
+                ", tagName='" + tagName + '\'' +
+                ", status=" + status +
+                '}';
     }
 }

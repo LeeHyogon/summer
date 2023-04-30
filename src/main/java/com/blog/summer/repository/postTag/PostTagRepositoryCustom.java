@@ -15,4 +15,6 @@ public interface PostTagRepositoryCustom {
     List<String> findTagNamesByStatusUpdate();
 
     List<PostTag> findAllStatusUpdate();
+
+    void deleteAllStatusDelete();
 }

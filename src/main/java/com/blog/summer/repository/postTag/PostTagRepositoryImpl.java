@@ -61,5 +61,13 @@ public class PostTagRepositoryImpl implements PostTagRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    @Transactional
+    public void deleteAllStatusDelete(){
+        queryFactory
+                .delete(postTag)
+                .where(postTag.status.eq(PostTagStatus.DELETED))
+                .execute();
+    }
 
 }

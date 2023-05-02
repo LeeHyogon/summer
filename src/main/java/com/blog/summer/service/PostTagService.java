@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class PostTagService {
     private final PostTagRepository postTagRepository;
     private final TagRepository tagRepository;
-    @Scheduled(cron ="0 0/1 * * * ?")
+    @Scheduled(cron ="0 0/10 * * * ?")
     public void registerUpdateStatusPost(){
         //이 부분 나중에 쿼리 1개로 최적화 여지 있을듯
         List<String> tagNames = postTagRepository.findTagNamesByStatusUpdate();
@@ -40,7 +40,7 @@ public class PostTagService {
         }
         postTagRepository.saveAll(postTags);
     }
-    @Scheduled(cron ="0 0/1 * * * ?")
+    @Scheduled(cron ="0 0/10 * * * ?")
     public void deleteDeleteStatusPost(){
         postTagRepository.deleteAllStatusDelete();
     }

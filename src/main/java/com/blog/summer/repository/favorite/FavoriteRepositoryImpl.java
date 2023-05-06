@@ -7,11 +7,10 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.transaction.Transactional;
 
 import static com.blog.summer.domain.QFavorite.favorite;
-import static com.blog.summer.domain.QPost.post;
+
 
 @RequiredArgsConstructor
 public class FavoriteRepositoryImpl implements FavoriteRepositoryCustom{

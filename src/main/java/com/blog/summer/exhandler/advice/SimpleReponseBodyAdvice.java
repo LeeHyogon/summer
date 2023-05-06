@@ -1,4 +1,4 @@
-package com.blog.summer.advice;
+package com.blog.summer.exhandler.advice;
 
 
 import com.blog.summer.domain.badcomment.BadComment;

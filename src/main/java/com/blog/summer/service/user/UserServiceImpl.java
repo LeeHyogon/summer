@@ -86,6 +86,7 @@ public class UserServiceImpl implements UserService {
     @Override
     // Refresh Token을 발급하는 메서드
     public void generateRefreshToken(String userId) {
+        /*
         //Token이 이미 존재하면 기존 refresh_token발행, 아니면 토큰생성.
         tokenRepository.findById(userId).ifPresentOrElse(
                 (token) ->{
@@ -109,6 +110,18 @@ public class UserServiceImpl implements UserService {
                     user.setRefreshToken(token.getRefresh_token());
                 }
         );
+         */
+        // Refresh Token 생성 로직을 구현합니다.
+        Token token = tokenRepository.save(
+                Token.builder()
+                        .id(userId)
+                        .refresh_token(UUID.randomUUID().toString())
+                        .expiration(300)
+                        .build()
+        );
+        UserEntity user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
+        user.setRefreshToken(token.getRefresh_token());
     }
 
     @Override

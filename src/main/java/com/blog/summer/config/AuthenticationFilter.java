@@ -64,7 +64,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String username = ((User) authResult.getPrincipal()).getUsername();
         UserDto userDetails = userService.getUserDetailsByEmail(username);
         String userId = userDetails.getUserId();
-        //이미 존재하면 시간 연장,
+        //이미 존재하면 시간 연장-> 로그인일 때는 매번, 갱신해주는 게 맞는것 같아서 수정.
         userService.generateRefreshToken(userId);
         String accessToken = jwtProvider.createToken(userId);
 

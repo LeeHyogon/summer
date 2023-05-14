@@ -19,5 +19,4 @@ public interface UserService extends UserDetailsService {
 
     Token validRefreshToken(String userId, String refreshToken);
 
-    void setRefreshToken(String userId, String refreshToken);
 }

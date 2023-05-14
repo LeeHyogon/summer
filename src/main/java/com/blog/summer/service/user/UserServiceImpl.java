@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -86,31 +87,7 @@ public class UserServiceImpl implements UserService {
     @Override
     // Refresh Token을 발급하는 메서드
     public void generateRefreshToken(String userId) {
-        /*
-        //Token이 이미 존재하면 기존 refresh_token발행, 아니면 토큰생성.
-        tokenRepository.findById(userId).ifPresentOrElse(
-                (token) ->{
-                    // 리프레시 토큰 만료일자가 얼마 남지 않았을 때 만료시간 연장
-                    if(token.getExpiration() < 10) {
-                        token.setExpiration(1000);
-                        tokenRepository.save(token);
-                    }
-                },
-                ()->{
-                    // Refresh Token 생성 로직을 구현합니다.
-                    Token token = tokenRepository.save(
-                            Token.builder()
-                                    .id(userId)
-                                    .refresh_token(UUID.randomUUID().toString())
-                                    .expiration(300)
-                                    .build()
-                    );
-                    UserEntity user = userRepository.findByUserId(userId)
-                            .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
-                    user.setRefreshToken(token.getRefresh_token());
-                }
-        );
-         */
+
         // Refresh Token 생성 로직을 구현합니다.
         Token token = tokenRepository.save(
                 Token.builder()
@@ -119,14 +96,13 @@ public class UserServiceImpl implements UserService {
                         .expiration(300)
                         .build()
         );
-        UserEntity user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
-        user.setRefreshToken(token.getRefresh_token());
+
     }
 
     @Override
     public Token validRefreshToken(String userId, String refreshToken)  {
-        Token token = tokenRepository.findById(userId).orElseThrow(() -> new NotFoundException("만료된 계정입니다. 로그인을 다시 시도하세요"));
+        Token token = tokenRepository.findById(userId).orElseThrow(() ->
+                new NotFoundException("만료된 계정입니다. 로그인을 다시 시도하세요"));
         // 해당유저의 Refresh 토큰 만료 : Redis에 해당 유저의 토큰이 존재하지 않음
         if (token.getRefresh_token() == null) {
             return null;
@@ -145,11 +121,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    public void setRefreshToken(String userId, String refreshToken) {
-        UserEntity user = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("사용자를 찾지못했습니다."));
-        user.setRefreshToken(refreshToken);
-    }
+
 
     public TokenDto refreshAccessToken(TokenDto token) {
         String userId = jwtProvider.getAccount(token.getAccess_token());

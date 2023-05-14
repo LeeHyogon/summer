@@ -1,5 +1,6 @@
 package com.blog.summer.service.user;
 
+import com.blog.summer.domain.Token;
 import com.blog.summer.domain.UserEntity;
 import com.blog.summer.dto.user.UserDto;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,5 +15,9 @@ public interface UserService extends UserDetailsService {
 
     UserDto getUserDetailsByEmail(String username);
 
+    void generateRefreshToken(String userid);
 
+    Token validRefreshToken(String userId, String refreshToken);
+
+    void setRefreshToken(String userId, String refreshToken);
 }

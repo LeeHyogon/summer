@@ -24,6 +24,8 @@ public class UserEntity extends BaseTimeEntity{
 
     private String encryptedPwd;
 
+    private String refreshToken;
+
     @OneToMany(mappedBy = "postUser")
     private List<Post> posts=new ArrayList<>();
 
@@ -50,5 +52,7 @@ public class UserEntity extends BaseTimeEntity{
     public void setEncryptedPwd(String encode) {
         this.encryptedPwd=encode;
     }
+
+    public void setRefreshToken(String refreshToken) { this.refreshToken = refreshToken;}
 
 }

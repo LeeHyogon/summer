@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
@@ -19,11 +20,13 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     private final Environment env;
     private final UserService userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JwtProvider jwtProvider;
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
-        http.authorizeRequests().antMatchers("/**")
-                .permitAll()
+        http.authorizeRequests().antMatchers("/**").permitAll()
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(getAuthenticationFilter());
 
@@ -32,7 +35,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     private AuthenticationFilter getAuthenticationFilter() throws Exception {
         AuthenticationFilter authenticationFilter =
-                new AuthenticationFilter(authenticationManager(),userService,env);
+                new AuthenticationFilter(authenticationManager(),userService,env,jwtProvider);
 //        authenticationFilter.setAuthenticationManager(authenticationManager());
         return authenticationFilter;
     }

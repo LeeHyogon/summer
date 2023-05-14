@@ -29,11 +29,15 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private UserService userService;
     private Environment env;
+    private JwtProvider jwtProvider;
 
-    public AuthenticationFilter(AuthenticationManager authenticationManager, UserService userService, Environment env) {
+
+    public AuthenticationFilter(AuthenticationManager authenticationManager, UserService userService
+            , Environment env, JwtProvider jwtProvider) {
         super(authenticationManager);
         this.userService = userService;
         this.env = env;
+        this.jwtProvider =jwtProvider;
     }
 
     @Override
@@ -59,16 +63,12 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                             Authentication authResult) throws IOException, ServletException {
         String username = ((User) authResult.getPrincipal()).getUsername();
         UserDto userDetails = userService.getUserDetailsByEmail(username);
+        String userId = userDetails.getUserId();
+        //이미 존재하면 시간 연장,
+        userService.generateRefreshToken(userId);
+        String accessToken = jwtProvider.createToken(userId);
 
-        String token = Jwts.builder()
-                .setSubject(userDetails.getUserId())
-                .setExpiration(new Date(System.currentTimeMillis()+
-                        Long.parseLong(env.getProperty("token.expiration_time"))))
-                .signWith(SignatureAlgorithm.HS512,env.getProperty("token.secret"))
-                .compact();
-
-        response.addHeader("token", token);
-        response.addHeader("userId", userDetails.getUserId());
-
+        response.addHeader("token", accessToken);
+        response.addHeader("userId", userId);
     }
 }

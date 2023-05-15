@@ -11,6 +11,7 @@ import com.blog.summer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,6 +30,7 @@ public class UserServiceImpl implements UserService {
     private final TokenRepository tokenRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+    private final Environment env;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -93,7 +95,7 @@ public class UserServiceImpl implements UserService {
                 Token.builder()
                         .id(userId)
                         .refresh_token(UUID.randomUUID().toString())
-                        .expiration(300)
+                        .expiration(Integer.valueOf(env.getProperty("refresh_token.expiration_time")))
                         .build()
         );
 
@@ -109,7 +111,7 @@ public class UserServiceImpl implements UserService {
         } else {
             // 리프레시 토큰 만료일자가 얼마 남지 않았을 때 만료시간 연장
             if(token.getExpiration() < 10) {
-                token.setExpiration(1000);
+                token.setExpiration(Integer.valueOf(env.getProperty("refresh_token.extend_time")));
                 tokenRepository.save(token);
             }
             // 토큰이 같은지 비교

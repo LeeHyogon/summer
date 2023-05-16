@@ -86,59 +86,5 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
-    @Override
-    // Refresh Token을 발급하는 메서드
-    public void generateRefreshToken(String userId) {
-
-        // Refresh Token 생성 로직을 구현합니다.
-        Token token = tokenRepository.save(
-                Token.builder()
-                        .id(userId)
-                        .refresh_token(UUID.randomUUID().toString())
-                        .expiration(Integer.valueOf(env.getProperty("refresh_token.expiration_time")))
-                        .build()
-        );
-
-    }
-
-    @Override
-    public Token validRefreshToken(String userId, String refreshToken)  {
-        Token token = tokenRepository.findById(userId).orElseThrow(() ->
-                new NotFoundException("만료된 계정입니다. 로그인을 다시 시도하세요"));
-        // 해당유저의 Refresh 토큰 만료 : Redis에 해당 유저의 토큰이 존재하지 않음
-        if (token.getRefresh_token() == null) {
-            return null;
-        } else {
-            // 리프레시 토큰 만료일자가 얼마 남지 않았을 때 만료시간 연장
-            if(token.getExpiration() < 10) {
-                token.setExpiration(Integer.valueOf(env.getProperty("refresh_token.extend_time")));
-                tokenRepository.save(token);
-            }
-            // 토큰이 같은지 비교
-            if(!token.getRefresh_token().equals(refreshToken)) {
-                return null;
-            } else {
-                return token;
-            }
-        }
-    }
-
-
-
-    public TokenDto refreshAccessToken(TokenDto token) {
-        String userId = jwtProvider.getAccount(token.getAccess_token());
-
-        Token refreshToken = validRefreshToken(userId, token.getRefresh_token());
-        if (refreshToken != null) {
-            return TokenDto.builder()
-                    .access_token(jwtProvider.createToken(userId))
-                    .refresh_token(refreshToken.getRefresh_token())
-                    .build();
-        } else {
-            throw new NotFoundException("로그인을 해주세요");
-        }
-    }
-
-
 
 }

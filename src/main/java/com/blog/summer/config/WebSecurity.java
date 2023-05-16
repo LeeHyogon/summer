@@ -11,34 +11,38 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity //스프링 시큐리티 필터가 스프링 필터체인에 등록
 @RequiredArgsConstructor
 public class WebSecurity extends WebSecurityConfigurerAdapter {
-
     private final Environment env;
     private final UserService userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtProvider jwtProvider;
+    private final TokenManager tokenManager;
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
-        http.authorizeRequests().antMatchers("/**").permitAll()
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .authorizeRequests()
+                    .antMatchers("/**").permitAll()
+                    .anyRequest().authenticated()
                 .and()
+                .addFilterBefore(new JwtAuthenticationFilter(tokenManager,jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(getAuthenticationFilter());
-
         http.headers().frameOptions().disable();
     }
 
     private AuthenticationFilter getAuthenticationFilter() throws Exception {
         AuthenticationFilter authenticationFilter =
-                new AuthenticationFilter(authenticationManager(),userService,env,jwtProvider);
+                new AuthenticationFilter(authenticationManager(),userService,env,jwtProvider,tokenManager);
 //        authenticationFilter.setAuthenticationManager(authenticationManager());
         return authenticationFilter;
     }
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

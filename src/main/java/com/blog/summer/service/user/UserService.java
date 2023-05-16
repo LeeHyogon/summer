@@ -15,8 +15,5 @@ public interface UserService extends UserDetailsService {
 
     UserDto getUserDetailsByEmail(String username);
 
-    void generateRefreshToken(String userid);
-
-    Token validRefreshToken(String userId, String refreshToken);
 
 }

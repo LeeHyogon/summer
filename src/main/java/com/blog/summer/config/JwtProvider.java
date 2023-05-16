@@ -52,4 +52,16 @@ public class JwtProvider {
         ret.add(AVAILABLE);
         return ret;
     }
+
+    public String parseToken(String jwt) {
+        try {
+            Jwts.parser().setSigningKey(env.getProperty("token.secret")).parseClaimsJws(jwt).getBody().getSubject();
+        } catch (ExpiredJwtException e) {
+            log.info("만료된 AccessToken입니다. {}",e.getClaims().getSubject(),e);
+            return null;
+        } catch (Exception e) {
+            log.info("Access token 에러 : .",e);
+        }
+        return Jwts.parser().setSigningKey(env.getProperty("token.secret")).parseClaimsJws(jwt).getBody().getSubject();
+    }
 }

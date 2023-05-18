@@ -31,8 +31,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                     .antMatchers("/**").permitAll()
                     .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(tokenManager,jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(getAuthenticationFilter());
+
         http.headers().frameOptions().disable();
     }
 

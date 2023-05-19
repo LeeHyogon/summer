@@ -1,5 +1,10 @@
 package com.blog.summer.common.util;
 
+import com.blog.summer.common.exception.InvalidRefreshTokenException;
+import com.blog.summer.common.exception.RefreshTokenRequiredException;
+import com.blog.summer.domain.Token;
+import com.blog.summer.dto.TokenDto;
+import com.blog.summer.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -12,17 +17,17 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class JwtUtil {
 
     private final Environment env;
-
+    private final TokenRepository tokenRepository;
     public static final String ACCESS_TOKEN_HEADER="accessToken";
     public static final String REFRESH_TOKEN_HEADER="refreshToken";
-    public static final String REFRESH_TOKEN_TYPE = "REFRESH";
-    public static final String ACCESS_TOKEN_TYPE = "ACCESS";
+
 
     @Value("${token.secret}")
     private String secret;
@@ -88,6 +93,44 @@ public class JwtUtil {
 
     public String getUserIdFromToken(String token) {
         return getClaimsFromToken(token).get("userId", String.class);
+    }
+
+    public void validRefreshToken(String userId, String refreshToken)  {
+        //Redis에 해당 유저 정보 존재하지 않음-> 발급이 안됐거나, 만료된 상태.
+        Token token = tokenRepository.findById(userId).orElseThrow(RefreshTokenRequiredException::new);
+        // 해당유저의 Refresh 토큰 만료 : Redis에 해당 유저의 토큰이 존재하지 않음
+        if (token.getRefresh_token() == null) {
+            throw new RefreshTokenRequiredException();
+        } else {
+            // 토큰이 같은지 비교
+            if(!token.getRefresh_token().equals(refreshToken)) {
+                //토큰이 다른경우
+                throw new InvalidRefreshTokenException();
+            } else {
+                return;
+            }
+        }
+    }
+    public TokenDto reGenerateAccessToken(String userId, String refreshToken) {
+        validRefreshToken(userId, refreshToken);
+        //액세스 토큰 재발급 시, 새로운 리프레시 토큰 포함.
+        String newRefreshToken = generateRefreshToken(userId);
+        return TokenDto.builder()
+                .access_token(generateAccessToken(userId))
+                .refresh_token(newRefreshToken)
+                .build();
+    }
+    // Refresh Token을 발급하는 메서드
+    public String generateRefreshToken(String userId) {
+        // Refresh Token 생성 로직을 구현합니다.
+        Token token = tokenRepository.save(
+                Token.builder()
+                        .id(userId)
+                        .refresh_token(UUID.randomUUID().toString())
+                        .expiration(Long.valueOf(env.getProperty("refresh_token.expiration_time")))
+                        .build()
+        );
+        return token.getRefresh_token();
     }
 
 }

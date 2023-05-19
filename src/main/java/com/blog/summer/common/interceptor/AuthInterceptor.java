@@ -31,7 +31,6 @@ abstract public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         this.setUri(request.getRequestURI());
-
         checkTokenExist();
         checkTokenExpired();
         setUserSeqToAttribute(request);
@@ -42,10 +41,6 @@ abstract public class AuthInterceptor implements HandlerInterceptor {
 
     protected String getTokenFromHeader(HttpServletRequest request, String headerName) {
         return request.getHeader(headerName);
-    }
-
-    protected boolean isValidType(String tokenType) {
-        return jwtUtil.getTypeFromToken(this.token).equals(tokenType);
     }
 
     private void checkTokenExpired() {

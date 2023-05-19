@@ -21,18 +21,18 @@ public class Token {
     private String refresh_token;
 
     @TimeToLive(unit = TimeUnit.SECONDS)
-    private Integer expiration;
+    private Long expiration;
 
     public Token() {
 
     }
 
-    public void setExpiration(Integer expiration) {
+    public void setExpiration(Long expiration) {
         this.expiration = expiration;
     }
 
     @Builder
-    public Token(String id, String refresh_token, Integer expiration) {
+    public Token(String id, String refresh_token, Long expiration) {
         this.id = id;
         this.refresh_token = refresh_token;
         this.expiration = expiration;

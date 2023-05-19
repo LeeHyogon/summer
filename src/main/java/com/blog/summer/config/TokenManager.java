@@ -48,11 +48,7 @@ public class TokenManager {
         if (token.getRefresh_token() == null) {
             return null;
         } else {
-            // 리프레시 토큰 만료일자가 얼마 남지 않았을 때 만료시간 연장
-            if(token.getExpiration() < 10) {
-                token.setExpiration(Integer.valueOf(env.getProperty("refresh_token.extend_time")));
-                tokenRepository.save(token);
-            }
+
             // 토큰이 같은지 비교
             if(!token.getRefresh_token().equals(refreshToken)) {
                 return null;

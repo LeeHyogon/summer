@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.blog.summer.common.util.JwtUtil.REFRESH_TOKEN_TYPE;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 @Component
 public class RefreshInterceptor extends AuthInterceptor {
 
-    private static final String REFRESH_TOKEN_TYPE = "REFRESH";
     private static final String REFRESH_TOKEN_HEADER_NAME = "R-Authorization";
 
     public RefreshInterceptor(JwtUtil jwtUtil) {

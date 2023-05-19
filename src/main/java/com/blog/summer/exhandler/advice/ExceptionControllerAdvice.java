@@ -108,7 +108,6 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler({BaseException.class})
     public ExceptionResult handleBaseException(BaseException ex) {
         log.error("handleBaseException ex :::", ex);
-
         return ex.getExceptionResult();
     }
 

@@ -17,6 +17,8 @@ public enum ResultType {
     REFRESH_TOKEN_REQUIRED(HttpStatus.UNAUTHORIZED, "401004", "Refresh token required"),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "401005", "token expired"),
     NO_ROLE(HttpStatus.UNAUTHORIZED, "401006", "No Role"),
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "401007", "Refresh token does not match"),
+
 
     PAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "404001", "Page not found"),
     DATA_NOT_FOUND(HttpStatus.NOT_FOUND, "404002", "Data not found"),

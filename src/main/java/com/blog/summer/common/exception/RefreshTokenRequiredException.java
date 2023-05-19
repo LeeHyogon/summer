@@ -9,4 +9,8 @@ public class RefreshTokenRequiredException extends BaseException {
     public RefreshTokenRequiredException(String message) {
         super(ResultType.REFRESH_TOKEN_REQUIRED, message);
     }
+
+    public RefreshTokenRequiredException() {
+        super(ResultType.REFRESH_TOKEN_REQUIRED);
+    }
 }

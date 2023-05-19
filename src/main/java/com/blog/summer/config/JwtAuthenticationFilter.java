@@ -45,8 +45,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if ("/login".equals(requestURI)) {
             filterChain.doFilter(request, response); // Skip this filter for /login
         }else {
-            String accessToken = request.getHeader(ACCESS_TOKEN_HEADER);
-            String refreshToken = request.getHeader(REFRESH_TOKEN_HEADER);
+            String accessToken = request.getHeader("");
+            String refreshToken = request.getHeader("");
             TokenDto tokenDto = TokenDto.builder()
                     .access_token(accessToken)
                     .refresh_token(refreshToken)

@@ -8,12 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 //import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static com.blog.summer.common.util.JwtUtil.ACCESS_TOKEN_TYPE;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 @Component
 public class AccessInterceptor extends AuthInterceptor {
 
-    private static final String ACCESS_TOKEN_TYPE = "ACCESS";
     private static final String ACCESS_TOKEN_HEADER_NAME = "Authorization";
 
     public AccessInterceptor(JwtUtil jwtUtil) {
@@ -32,7 +32,7 @@ public class AccessInterceptor extends AuthInterceptor {
 
     @Override
     protected void checkTokenExist() {
-        if (isEmpty(this.token) || !this.isValidType(ACCESS_TOKEN_TYPE)) {
+        if (isEmpty(this.token)) {
             throw new AccessTokenRequiredException(this.uri);
         }
     }

@@ -4,15 +4,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,18 +19,19 @@ public class JwtUtil {
 
     private final Environment env;
 
+    public static final String ACCESS_TOKEN_HEADER="accessToken";
+    public static final String REFRESH_TOKEN_HEADER="refreshToken";
+    public static final String REFRESH_TOKEN_TYPE = "REFRESH";
+    public static final String ACCESS_TOKEN_TYPE = "ACCESS";
+
     @Value("${token.secret}")
     private String secret;
 
     @Value("${token.expiration_time}")
     private String expiration;
 
-    private Key key;
 
-    @PostConstruct
-    public void init() {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
-    }
+    /*
     public String generate(String userId) {
         String token = Jwts.builder()
                 .setSubject(userId)
@@ -44,42 +41,33 @@ public class JwtUtil {
                 .compact();
         return token;
     }
-    /*
-    public String generate(long userSeq, String type) {
+     */
+
+    public String generateAccessToken(String userId) {
 
         // 1. token 내부에 저장할 정보
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userSeq", userSeq);
-        claims.put("type", type);
+        claims.put("userId", userId);
 
         // 2. token 생성일
-        final Date createdDate = new Date();
-
+        final Date createdDate = new Date(System.currentTimeMillis());
         // 3. token 만료일
-        long expirationTime;
-        if ("ACCESS".equals(type)) {
-            // 테스트용(30분)
-            expirationTime = Long.parseLong(expiration) * 1000;
-        } else {
-            // 테스트용(1시간)
-            expirationTime = Long.parseLong(expiration) * 1000 * 2;
-        }
-        final Date expirationDate = new Date(createdDate.getTime() + expirationTime);
-
+        final Date expirationDate = new Date(System.currentTimeMillis()+
+                Long.parseLong(env.getProperty("token.expiration_time")));
 
         return Jwts.builder()
                 .setClaims(claims)      // 1
                 .setIssuedAt(createdDate)       // 2
                 .setExpiration(expirationDate)      // 3
-                .signWith(key)
+                .signWith(SignatureAlgorithm.HS512,env.getProperty("token.secret"))
                 .compact();
     }
-    */
+
 
 
     public Claims getClaimsFromToken(String token) {
         return Jwts.parser()
-                .setSigningKey(key)
+                .setSigningKey(env.getProperty("token.secret"))
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -98,8 +86,8 @@ public class JwtUtil {
     }
 
 
-    public Long getUserSeqFromToken(String token) {
-        return getClaimsFromToken(token).get("userSeq", Long.class);
+    public String getUserIdFromToken(String token) {
+        return getClaimsFromToken(token).get("userId", String.class);
     }
 
 }

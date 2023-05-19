@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static com.blog.summer.config.TokenUtil.ACCESS_TOKEN_HEADER;
-import static com.blog.summer.config.TokenUtil.REFRESH_TOKEN_HEADER;
+import static com.blog.summer.common.util.JwtUtil.ACCESS_TOKEN_HEADER;
+import static com.blog.summer.common.util.JwtUtil.REFRESH_TOKEN_HEADER;
 
 
 @Slf4j

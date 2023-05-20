@@ -1,6 +1,7 @@
 package com.blog.summer.config;
 
 
+import com.blog.summer.common.util.TokenUtil;
 import com.blog.summer.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +21,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     private final Environment env;
     private final UserService userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final JwtProvider jwtProvider;
-    private final TokenManager tokenManager;
+    private final TokenUtil tokenUtil;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
@@ -38,7 +39,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     private AuthenticationFilter getAuthenticationFilter() throws Exception {
         AuthenticationFilter authenticationFilter =
-                new AuthenticationFilter(authenticationManager(),userService,env,jwtProvider,tokenManager);
+                new AuthenticationFilter(authenticationManager(),userService,env,tokenUtil);
 //        authenticationFilter.setAuthenticationManager(authenticationManager());
         return authenticationFilter;
     }

@@ -17,15 +17,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(accessInterceptor)
-                .excludePathPatterns("/login", "/error");
+                .excludePathPatterns("/users","/login", "/error");
         registry.addInterceptor(refreshInterceptor)
                 .addPathPatterns("/v1/auth/refresh");
     }
-
-//    private final JwtUtil jwtUtil;
-//
-//    @Bean
-//    public FilterRegistrationBean<OncePerRequestFilter> authFilter() {
-//        return new FilterRegistrationBean<>(new AuthFilter(jwtUtil));
-//    }
 }

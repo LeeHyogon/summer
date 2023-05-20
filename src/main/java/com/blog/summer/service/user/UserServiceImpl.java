@@ -1,9 +1,6 @@
 package com.blog.summer.service.user;
 
-import com.blog.summer.config.JwtProvider;
-import com.blog.summer.domain.Token;
 import com.blog.summer.domain.UserEntity;
-import com.blog.summer.dto.TokenDto;
 import com.blog.summer.dto.user.UserDto;
 import com.blog.summer.exception.NotFoundException;
 import com.blog.summer.repository.TokenRepository;
@@ -18,7 +15,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -29,8 +25,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
-    private final Environment env;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

@@ -1,6 +1,7 @@
 package com.blog.summer.controller;
 
 
+import com.blog.summer.common.util.TokenUtil;
 import com.blog.summer.domain.Post;
 import com.blog.summer.dto.post.*;
 import com.blog.summer.repository.post.PostQueryRepository;
@@ -23,19 +24,19 @@ public class PostController {
     private final EntityManager em;
     private final PostService postService;
     private final PostRepository postRepository;
-    private final PostQueryRepository postQueryRepository;
     @PostMapping("/posts")
-    public ResponseEntity<ResponsePostRegister> postRegister(@RequestBody RequestPostRegister requestPostRegister) {
+    public ResponseEntity<ResponsePostRegister> postRegister(
+            @RequestAttribute(TokenUtil.USER_ID_ATTRIBUTE_KEY) String userId,
+            @RequestBody RequestPostRegister requestPostRegister) {
 
         PostDto postDto= PostDto.builder()
                 .title(requestPostRegister.getTitle())
                 .content(requestPostRegister.getContent())
-                .userId(requestPostRegister.getUserId())
+                .userId(userId)
                 .categoryName(requestPostRegister.getCategoryName())
                 .tagNames(requestPostRegister.getTagNames())
                 .build();
         ResponsePostRegister responsePostRegister = postService.createPost(postDto);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(responsePostRegister);
     }
     @PatchMapping("/posts/{postId}")
@@ -47,7 +48,6 @@ public class PostController {
                 .postId(postId)
                 .title(requestPostRegister.getTitle())
                 .content(requestPostRegister.getContent())
-                .userId(requestPostRegister.getUserId())
                 .categoryName(requestPostRegister.getCategoryName())
                 .tagNames(requestPostRegister.getTagNames())
                 .build();

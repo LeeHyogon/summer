@@ -6,7 +6,6 @@ import lombok.Data;
 public class RequestCommentRegister {
 
     private Long postId;
-    private String userId;
     private String body;
 
 }

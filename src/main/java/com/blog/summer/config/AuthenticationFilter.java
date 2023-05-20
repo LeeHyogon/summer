@@ -1,11 +1,10 @@
 package com.blog.summer.config;
 
+import com.blog.summer.common.util.TokenUtil;
 import com.blog.summer.dto.user.RequestLogin;
 import com.blog.summer.dto.user.UserDto;
 import com.blog.summer.service.user.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,10 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 
-import static com.blog.summer.common.util.JwtUtil.ACCESS_TOKEN_HEADER;
-import static com.blog.summer.common.util.JwtUtil.REFRESH_TOKEN_HEADER;
+import static com.blog.summer.common.util.TokenUtil.*;
 
 
 @Slf4j
@@ -32,16 +29,16 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private UserService userService;
     private Environment env;
-    private JwtProvider jwtProvider;
-    private TokenManager tokenManager;
+
+    private TokenUtil tokenUtil;
+
 
     public AuthenticationFilter(AuthenticationManager authenticationManager, UserService userService
-            , Environment env, JwtProvider jwtProvider,TokenManager tokenManager) {
+            , Environment env,TokenUtil tokenUtil) {
         super(authenticationManager);
         this.userService = userService;
         this.env = env;
-        this.jwtProvider =jwtProvider;
-        this.tokenManager=tokenManager;
+        this.tokenUtil=tokenUtil;
     }
 
     @Override
@@ -68,12 +65,10 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String username = ((User) authResult.getPrincipal()).getUsername();
         UserDto userDetails = userService.getUserDetailsByEmail(username);
         String userId = userDetails.getUserId();
-        //이미 존재하면 시간 연장-> 로그인일 때는 매번, 갱신해주는 게 맞는것 같아서 수정.
-        String refreshToken = tokenManager.generateRefreshToken(userId);
-        String accessToken = jwtProvider.createToken(userId);
-
+        log.info("userId ::: {}",userId);
+        String accessToken = tokenUtil.generateAccessToken(userId);
+        String refreshToken = tokenUtil.generateRefreshToken(userId);
         response.addHeader(ACCESS_TOKEN_HEADER, accessToken);
-        response.addHeader(REFRESH_TOKEN_HEADER, refreshToken);
-        response.addHeader("userId", userId);
+        response.addHeader(REFRESH_TOKEN_HEADER,refreshToken);
     }
 }

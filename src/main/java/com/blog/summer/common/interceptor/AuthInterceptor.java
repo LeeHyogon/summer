@@ -2,7 +2,7 @@ package com.blog.summer.common.interceptor;
 
 
 import com.blog.summer.common.exception.ExpiredTokenException;
-import com.blog.summer.common.util.JwtUtil;
+import com.blog.summer.common.util.TokenUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -15,7 +15,7 @@ abstract public class AuthInterceptor implements HandlerInterceptor {
 
     private static final String USER_ID_ATTRIBUTE_KEY = "userId";
 
-    private final JwtUtil jwtUtil;
+    private final TokenUtil tokenUtil;
 
     @Getter
     @Setter
@@ -33,7 +33,7 @@ abstract public class AuthInterceptor implements HandlerInterceptor {
         this.setUri(request.getRequestURI());
         checkTokenExist();
         checkTokenExpired();
-        setUserSeqToAttribute(request);
+        setUserIdToAttribute(request);
         return HandlerInterceptor.super.preHandle(request, response, handler);
     }
 
@@ -44,13 +44,13 @@ abstract public class AuthInterceptor implements HandlerInterceptor {
     }
 
     private void checkTokenExpired() {
-        if (jwtUtil.isExpired(this.token)) {
+        if (tokenUtil.isExpired(this.token)) {
             throw new ExpiredTokenException();
         }
     }
 
-    private void setUserSeqToAttribute(HttpServletRequest request) {
-        String userId = jwtUtil.getUserIdFromToken(this.token);
+    private void setUserIdToAttribute(HttpServletRequest request) {
+        String userId = tokenUtil.getUserIdFromToken(this.token);
         request.setAttribute(USER_ID_ATTRIBUTE_KEY, userId);
     }
 }

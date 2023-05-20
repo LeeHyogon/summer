@@ -1,6 +1,6 @@
-package com.blog.summer.common;
+package com.blog.summer.common.service;
 
-import com.blog.summer.common.util.JwtUtil;
+import com.blog.summer.common.util.TokenUtil;
 import com.blog.summer.dto.TokenDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final JwtUtil jwtUtil;
+    private final TokenUtil tokenUtil;
 
 
 
     public TokenDto reGenerateAccessToken(String userId,String refreshToken){
-        return jwtUtil.reGenerateAccessToken(userId,refreshToken);
+        return tokenUtil.reGenerateAccessToken(userId,refreshToken);
     }
 }

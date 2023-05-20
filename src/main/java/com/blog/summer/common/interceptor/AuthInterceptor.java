@@ -1,7 +1,6 @@
 package com.blog.summer.common.interceptor;
 
 
-import com.blog.summer.common.exception.ExpiredTokenException;
 import com.blog.summer.common.util.TokenUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -10,12 +9,14 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static com.blog.summer.common.util.TokenUtil.USER_ID_ATTRIBUTE_KEY;
+
 @RequiredArgsConstructor
 abstract public class AuthInterceptor implements HandlerInterceptor {
 
-    private static final String USER_ID_ATTRIBUTE_KEY = "userId";
 
-    private final TokenUtil tokenUtil;
+    protected final TokenUtil tokenUtil;
 
     @Getter
     @Setter
@@ -25,14 +26,11 @@ abstract public class AuthInterceptor implements HandlerInterceptor {
     @Setter
     protected String uri;
 
-    @Setter
-    protected String tokenType;
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         this.setUri(request.getRequestURI());
         checkTokenExist();
-        checkTokenExpired();
+        checkTokenValid();
         setUserIdToAttribute(request);
         return HandlerInterceptor.super.preHandle(request, response, handler);
     }
@@ -43,11 +41,7 @@ abstract public class AuthInterceptor implements HandlerInterceptor {
         return request.getHeader(headerName);
     }
 
-    private void checkTokenExpired() {
-        if (tokenUtil.isExpired(this.token)) {
-            throw new ExpiredTokenException();
-        }
-    }
+    abstract protected void checkTokenValid();
 
     private void setUserIdToAttribute(HttpServletRequest request) {
         String userId = tokenUtil.getUserIdFromToken(this.token);

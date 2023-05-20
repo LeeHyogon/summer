@@ -1,14 +1,12 @@
 package com.blog.summer.common.util;
 
+import com.blog.summer.common.exception.ExpiredTokenException;
 import com.blog.summer.common.exception.InvalidRefreshTokenException;
 import com.blog.summer.common.exception.RefreshTokenRequiredException;
 import com.blog.summer.domain.Token;
 import com.blog.summer.dto.TokenDto;
 import com.blog.summer.repository.TokenRepository;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -88,15 +86,21 @@ public class TokenUtil {
             log.info("Expired Time : {}",formattedDate);
             return false;
         } catch (ExpiredJwtException ex) {
-            return true;
+            throw new ExpiredTokenException();
+        }catch (SignatureException ex){
+            throw new InvalidRefreshTokenException();
         }
     }
 
     public String getUserIdFromToken(String token) {
-        return getClaimsFromToken(token).get("userId", String.class);
+        try{
+            return getClaimsFromToken(token).get(USER_ID_ATTRIBUTE_KEY,String.class);
+        }catch (ExpiredJwtException ex){
+            throw new ExpiredTokenException();
+        }catch (SignatureException ex){
+            throw new InvalidRefreshTokenException();
+        }
     }
-
-
     //Interceptor에서 검증.
     public boolean validRefreshToken(String userId, String refreshToken)  {
         //Redis에 해당 유저 정보 존재하지 않음-> 발급이 안됐거나, 만료된 상태.
@@ -124,11 +128,26 @@ public class TokenUtil {
 
     // Refresh Token을 발급하는 메서드
     public String generateRefreshToken(String userId) {
+        // 1. token 내부에 저장할 정보
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+
+        // 2. token 생성일
+        final Date createdDate = new Date();
+        // 3. token 만료일 -> 시간을 넣지 않으면, 매번 똑같은 값이 생성됨...
+        final Date expirationDate = new Date(createdDate.getTime()+99999999L);
+
+        String refreshToken = Jwts.builder()
+                .setClaims(claims)      // 1
+                .setIssuedAt(createdDate)       // 2
+                .setExpiration(expirationDate)      // 3
+                .signWith(SignatureAlgorithm.HS512, env.getProperty("token.secret"))
+                .compact();
         // Refresh Token 생성 로직을 구현합니다.
         Token token = tokenRepository.save(
                 Token.builder()
                         .id(userId)
-                        .refresh_token(UUID.randomUUID().toString())
+                        .refresh_token(refreshToken)
                         .expiration(Long.valueOf(env.getProperty("refresh_token.expiration_time")))
                         .build()
         );

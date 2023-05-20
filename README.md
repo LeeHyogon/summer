@@ -142,4 +142,11 @@ Logic이 복잡해지더라도 연관관계를 설정하고,
 saveAll의 쿼리 갯수가 건당 1개씩 발생하는지 추후에 체크해봐야함.
 
 
+
+### AccessToken방식을 RefreshToken방식으로 교체
+
+#### 보안 취약점 개선.
+
+### Controller Advice를 활용한 예외 처리 및 Log 출력 개선
+
 	

@@ -30,12 +30,6 @@ public class TokenUtil {
     public static final String ACCESS_TOKEN_HEADER="accessToken";
     public static final String REFRESH_TOKEN_HEADER="refreshToken";
 
-    @Value("${token.secret}")
-    private String secret;
-
-    @Value("${token.expiration_time}")
-    private String expiration;
-
 
     /*
     public String generate(String userId) {
@@ -72,34 +66,29 @@ public class TokenUtil {
 
 
     public Claims getClaimsFromToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(env.getProperty("token.secret"))
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parser()
+                    .setSigningKey(env.getProperty("token.secret"))
+                    .parseClaimsJws(token)
+                    .getBody();
+        }catch (ExpiredJwtException ex) {
+            throw new ExpiredTokenException();
+        }catch (JwtException ex){
+            throw new InvalidRefreshTokenException();
+        }
     }
 
     public boolean isExpired(String token) {
-        try {
-            Date date = getClaimsFromToken(token).getExpiration();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); // use your desired format
-            String formattedDate = sdf.format(date);
-            log.info("Expired Time : {}",formattedDate);
-            return false;
-        } catch (ExpiredJwtException ex) {
-            throw new ExpiredTokenException();
-        }catch (SignatureException ex){
-            throw new InvalidRefreshTokenException();
-        }
+
+        Date date = getClaimsFromToken(token).getExpiration();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); // use your desired format
+        String formattedDate = sdf.format(date);
+        log.info("Expired Time : {}",formattedDate);
+        return false;
     }
 
     public String getUserIdFromToken(String token) {
-        try{
-            return getClaimsFromToken(token).get(USER_ID_ATTRIBUTE_KEY,String.class);
-        }catch (ExpiredJwtException ex){
-            throw new ExpiredTokenException();
-        }catch (SignatureException ex){
-            throw new InvalidRefreshTokenException();
-        }
+        return getClaimsFromToken(token).get(USER_ID_ATTRIBUTE_KEY,String.class);
     }
     //Interceptor에서 검증.
     public boolean validRefreshToken(String userId, String refreshToken)  {

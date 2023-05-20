@@ -32,15 +32,15 @@ public class AccessInterceptor extends AuthInterceptor {
         return super.preHandle(request, response, handler);
     }
 
-   @Override
+    @Override
+    protected void checkTokenValid() {
+        tokenUtil.isExpired(this.token);
+    }
+    @Override
     protected void checkTokenExist() {
         if (isEmpty(this.token)) {
             throw new AccessTokenRequiredException(this.uri);
         }
-    }
-    @Override
-    protected void checkTokenValid() {
-        tokenUtil.isExpired(this.token);
     }
 
 }

@@ -40,6 +40,7 @@ public class RefreshInterceptor extends AuthInterceptor {
     private void setRefreshTokenToAttribute(HttpServletRequest request, String refreshToken) {
         request.setAttribute(REFRESH_TOKEN_HEADER,refreshToken);
     }
+    @Override
     protected void checkTokenValid() {
         String userId = tokenUtil.getUserIdFromToken(this.token);
         tokenUtil.validRefreshToken(userId,this.token);

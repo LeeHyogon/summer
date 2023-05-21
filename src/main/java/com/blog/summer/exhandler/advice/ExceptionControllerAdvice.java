@@ -30,6 +30,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         log.error("handleBaseException ex :::", ex);
         return ex.getExceptionResult();
     }
+    //테스트
 
     private ExceptionResult processException(ResultType resultType) {
         return new ExceptionResult(resultType);
